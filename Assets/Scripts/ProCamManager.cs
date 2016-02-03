@@ -67,7 +67,9 @@ public class ProCamManager : MonoBehaviour {
 
         //外部パラメータの設定(カメラ)は常に原点なので単位行列
         // set external matrix
-        mainCamera.worldToCameraMatrix = Matrix4x4.identity;
+        ////z軸方向に逆を向いているので、回転
+        mainCamera.worldToCameraMatrix = Matrix4x4.identity * Matrix4x4.TRS(Vector3.zero, Quaternion.AngleAxis(180, Vector3.up), Vector3.one);
+        //mainCamera.worldToCameraMatrix = Matrix4x4.identity;
     }
 
     // パラメータを読み込み,カメラに設定
@@ -127,6 +129,9 @@ public class ProCamManager : MonoBehaviour {
         ExternalMatrix.m03 = (float)(-TMat[0] / 1000);
         ExternalMatrix.m13 = (float)(-TMat[1] / 1000);
         ExternalMatrix.m23 = (float)(-TMat[2] / 1000);
+
+        ////z軸方向に逆を向いているので、回転
+        ExternalMatrix =ExternalMatrix * Matrix4x4.TRS(Vector3.zero, Quaternion.AngleAxis(180, Vector3.up), Vector3.one) ;
 
         //転置(逆行列)
         //ExternalMatrix = ExternalMatrix.inverse;
