@@ -11,6 +11,8 @@ public class ProCamManager : MonoBehaviour {
     static extern void loadProjectorParam(double[] projectionMatrix, double[] dist);
     [DllImport("ProjectorPoseEstimation_DLL", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     static extern void loadExternalParam(double[] R, double[] T);
+    [DllImport("ProjectorPoseEstimation_DLL", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    static extern void PCL_viewer();
 
     public Camera mainCamera;
     public Camera mainProjector;
@@ -24,6 +26,11 @@ public class ProCamManager : MonoBehaviour {
 	void Update () {
 	
 	}
+
+    public void callPCLViewer()
+    {
+        PCL_viewer();
+    }
 
     public void loadParam(int camWidth, int camHeight, int proWidth, int proHeight)
     {

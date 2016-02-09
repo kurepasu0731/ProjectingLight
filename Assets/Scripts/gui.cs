@@ -33,6 +33,10 @@ public class gui : MonoBehaviour {
         {
             window.callProjection(int.Parse(proWidth), int.Parse(proHeight), int.Parse(num));     // 投影の切り替え
         }
+        if (GUI.Button(new Rect(20, 90, 150, 20), "PCL Viewer"))
+        {
+            procamManager.callPCLViewer();
+        }
 
 
         GUI.TextField(new Rect(170, 100, 100, 20), "Camera width");
@@ -46,5 +50,6 @@ public class gui : MonoBehaviour {
         proHeight = GUI.TextField(new Rect(120, 120, 50, 20), proHeight);
         GUI.TextField(new Rect(20, 140, 100, 20), "Projector Num");
         num = GUI.TextField(new Rect(120, 140, 50, 20), num);
+
     }
 }
