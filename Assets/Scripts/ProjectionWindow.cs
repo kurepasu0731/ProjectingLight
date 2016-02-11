@@ -18,6 +18,7 @@ public class ProjectionWindow : MonoBehaviour {
 
 
     public Camera myProjector;
+    public RenderTexture ProjectorImage;
     public int proWidth = 1280;
     public int proHeight = 800;
     private string windowName = "Projection";
@@ -47,12 +48,16 @@ public class ProjectionWindow : MonoBehaviour {
         {
 
             // off-screen rendering
-            var camtex = RenderTexture.GetTemporary(proWidth, proHeight, 24, RenderTextureFormat.Default, RenderTextureReadWrite.Default, 1);
-            myProjector.targetTexture = camtex;
-            myProjector.Render();
-            RenderTexture.active = camtex;
+            //var camtex = RenderTexture.GetTemporary(proWidth, proHeight, 24, RenderTextureFormat.Default, RenderTextureReadWrite.Default, 1);
+            //myProjector.targetTexture = camtex;
+            //myProjector.Render();
+            //RenderTexture.active = camtex;
 
-            tex.ReadPixels(new Rect(0, 0, camtex.width, camtex.height), 0, 0);
+            //tex.ReadPixels(new Rect(0, 0, camtex.width, camtex.height), 0, 0);
+            //tex.Apply();
+
+            RenderTexture.active = ProjectorImage;
+            tex.ReadPixels(new Rect(0, 0, ProjectorImage.width, ProjectorImage.height), 0, 0);
             tex.Apply();
 
             // Convert texture to ptr
@@ -65,9 +70,11 @@ public class ProjectionWindow : MonoBehaviour {
 
             texturePixelsHandle_.Free();
 
+            //RenderTexture.active = null;
+            //RenderTexture.ReleaseTemporary(camtex);
+            //myProjector.targetTexture = null;
+
             RenderTexture.active = null;
-            RenderTexture.ReleaseTemporary(camtex);
-            myProjector.targetTexture = null;
         }
 	}
 

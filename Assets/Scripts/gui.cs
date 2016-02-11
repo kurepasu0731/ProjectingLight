@@ -51,5 +51,8 @@ public class gui : MonoBehaviour {
         GUI.TextField(new Rect(20, 140, 100, 20), "Projector Num");
         num = GUI.TextField(new Rect(120, 140, 50, 20), num);
 
+        //投影背景
+        //GUI.DrawTexture(new Rect(0, 0, float.Parse(camWidth), float.Parse(camHeight)), BackGround, ScaleMode.ScaleToFit);
+
     }
 }

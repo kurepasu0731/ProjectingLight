@@ -17,9 +17,16 @@ public class ProCamManager : MonoBehaviour {
     public Camera mainCamera;
     public Camera mainProjector;
 
+    public int maxDisplayCount = 2;
+
 	// Use this for initialization
 	void Start () {
-	
+        //マルチディスプレイを有効にする
+        for (int i = 0; i < maxDisplayCount && i < Display.displays.Length; i++)
+        {
+            Display.displays[i].Activate();
+        }	
+
 	}
 	
 	// Update is called once per frame
