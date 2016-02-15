@@ -8,8 +8,8 @@ public class WebCameraManager : MonoBehaviour {
     public int FPS = 30;
 
     private WebCamTexture webcamTexture;
-    private Color32[] color32;
-    private Texture2D texture;
+    //private Color32[] color32;
+    //private Texture2D texture;
 
     void Start()
     {
@@ -26,12 +26,15 @@ public class WebCameraManager : MonoBehaviour {
     }	
 	// Update is called once per frame
 	void Update () {
-        //テクスチャに変換
-        color32 = webcamTexture.GetPixels32();
-        texture = new Texture2D(webcamTexture.width, webcamTexture.height);
-        texture.SetPixels32(color32);
-        texture.Apply();
 	}
 
-    public Texture2D getWebCamTexture() { return texture; }
+    public Texture2D getWebCamTexture() { 
+        //テクスチャに変換
+        Color32[] color32 = webcamTexture.GetPixels32();
+        Texture2D texture = new Texture2D(webcamTexture.width, webcamTexture.height);
+        texture.SetPixels32(color32);
+        texture.Apply();
+
+        return texture; 
+    }
 }
