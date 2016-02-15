@@ -176,4 +176,32 @@ public class ProCamManager : MonoBehaviour {
         //mainProjector.worldToCameraMatrix = Matrix4x4.identity;
 
     }
+
+    //プロジェクタの外部パラメータの更新
+    public void UpdateProjectorExternalParam(double[] RMat, double[] TMat)
+    {
+        Matrix4x4 ExternalMatrix = Matrix4x4.identity;
+
+        ExternalMatrix.m00 = (float)RMat[0];
+        ExternalMatrix.m01 = (float)RMat[1];
+        ExternalMatrix.m02 = (float)RMat[2];
+        ExternalMatrix.m10 = (float)RMat[3];
+        ExternalMatrix.m11 = (float)RMat[4];
+        ExternalMatrix.m12 = (float)RMat[5];
+        ExternalMatrix.m20 = (float)RMat[6];
+        ExternalMatrix.m21 = (float)RMat[7];
+        ExternalMatrix.m22 = (float)RMat[8];
+
+        //tをセット
+        ExternalMatrix.m03 = (float)(-TMat[0] / 1000);
+        ExternalMatrix.m13 = (float)(-TMat[1] / 1000);
+        ExternalMatrix.m23 = (float)(-TMat[2] / 1000);
+
+        ////z軸方向に逆を向いているので、回転
+        ExternalMatrix = ExternalMatrix * Matrix4x4.TRS(Vector3.zero, Quaternion.AngleAxis(180, Vector3.up), Vector3.one);
+
+        // set external matrix
+        mainProjector.worldToCameraMatrix = ExternalMatrix;
+
+    }
 }

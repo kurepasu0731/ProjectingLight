@@ -16,6 +16,14 @@ public class ProjectionWindow : MonoBehaviour {
     [DllImport("multiWindow", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     static extern void fullWindow(string windowName, int displayNum, System.IntPtr data, int width, int height);
 
+    //[DllImport("ExternalWindow", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    //static extern IntPtr openWindow(string windowName, int displayNum, int width, int height);
+    //[DllImport("ExternalWindow", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    //static extern void destroyWindow(IntPtr window);
+    //[DllImport("ExternalWindow", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    //static extern void drawTextureFullWindow(IntPtr window, IntPtr data);
+    //[DllImport("ExternalWindow", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    //static extern void showWindow(string windowName, System.IntPtr data, int width, int height);
 
     public Camera myProjector;
     public RenderTexture ProjectorImage;
@@ -32,11 +40,13 @@ public class ProjectionWindow : MonoBehaviour {
 
     private bool projection_flag = false;
 
+    //private IntPtr window_;
+
+
 	// Use this for initialization
     void Start()
     {
         myProjector = GetComponent<Camera>();
-
         tex = new Texture2D(proWidth, proHeight, TextureFormat.ARGB32, false);
     }
 	
@@ -67,6 +77,7 @@ public class ProjectionWindow : MonoBehaviour {
 
             // Show a window
             fullWindow(windowName, displayNum, texturePixelsPtr_, proWidth, proHeight);
+            //drawTextureFullWindow(window_, texturePixelsPtr_);
 
             texturePixelsHandle_.Free();
 
@@ -92,10 +103,13 @@ public class ProjectionWindow : MonoBehaviour {
 
             closeWindow(windowName);
             openWindow(windowName);
+            //destroyWindow(window_);
+            //window_ = openWindow(windowName, displayNum, proWidth, proHeight);
         }
         else
         {
             closeWindow(windowName);
+            //destroyWindow(window_);
         }
     }
 
@@ -103,5 +117,6 @@ public class ProjectionWindow : MonoBehaviour {
     void OnApplicationQuit()
     {
         closeWindow(windowName);
+        //destroyWindow(window_);
     }
 }
