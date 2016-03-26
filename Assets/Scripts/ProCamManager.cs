@@ -33,15 +33,7 @@ public class ProCamManager : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
-
-        float yr = 20 * Time.deltaTime;
-        transform.Rotate(0, yr, 0);
-        if (Time.frameCount % Application.targetFrameRate == 0)
-        {
-            print("FPS=" + 1 / Time.deltaTime);
-        }
-	
+	void Update () {	
 	}
 
     public void callPCLViewer()

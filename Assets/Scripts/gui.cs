@@ -29,15 +29,16 @@ public class gui : MonoBehaviour {
         if (GUI.Button(new Rect(20, 50, 150, 20), "パラメータ読み込み"))
         {
             procamManager.loadParam(int.Parse(camWidth), int.Parse(camHeight), int.Parse(proWidth), int.Parse(proHeight));
-            projectorposeestimationManager.callLoadParam();
+            projectorposeestimationManager.init(0, 30, int.Parse(camWidth), int.Parse(camHeight));
         }
         if (GUI.Button(new Rect(20, 70, 150, 20), "投影"))
         {
             window.callProjection(int.Parse(proWidth), int.Parse(proHeight), int.Parse(num));     // 投影の切り替え
         }
-        if (GUI.Button(new Rect(20, 90, 150, 20), "PCL Viewer"))
+        if (GUI.Button(new Rect(20, 90, 150, 20), "プロジェクタトラッキング開始"))
         {
-            procamManager.callPCLViewer();
+            //procamManager.callPCLViewer();
+            projectorposeestimationManager.isTrack = true;
         }
 
 
