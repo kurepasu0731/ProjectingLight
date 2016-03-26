@@ -25,12 +25,22 @@ public class ProCamManager : MonoBehaviour {
         for (int i = 0; i < maxDisplayCount && i < Display.displays.Length; i++)
         {
             Display.displays[i].Activate();
-        }	
+        }
+	
+        //FPS設定(Dont sync にしてないと効かない)
+        Application.targetFrameRate = 60;
 
 	}
 	
 	// Update is called once per frame
 	void Update () {
+
+        float yr = 20 * Time.deltaTime;
+        transform.Rotate(0, yr, 0);
+        if (Time.frameCount % Application.targetFrameRate == 0)
+        {
+            print("FPS=" + 1 / Time.deltaTime);
+        }
 	
 	}
 
