@@ -18,6 +18,13 @@ public class ProCamManager : MonoBehaviour {
     public Camera mainProjector;
 
     public int maxDisplayCount = 2;
+    
+    //プロジェクタの内部、歪み係数
+    public double[] proj_K;
+    public double[] proj_dist;
+    //プロジェクタの外部(確認表示用)
+    public double[] proj_R;
+    public double[] proj_T;
 
 	// Use this for initialization
 	void Start () {
@@ -92,23 +99,23 @@ public class ProCamManager : MonoBehaviour {
     public void setProjectorMatrix(int width, int height)
     {
         // 内部パラメータの設定
-        double[] cameraMat = new double[9];
-        double[] dist = new double[5];
+        proj_K = new double[9];
+        proj_dist = new double[5];
 
-        loadProjectorParam(cameraMat, dist);
+        loadProjectorParam(proj_K, proj_dist);
 
         double far = mainCamera.farClipPlane;
         double near = mainCamera.nearClipPlane;
 
         Matrix4x4 cameraMatrix = Matrix4x4.zero;
 
-        cameraMatrix.m00 = (float)((-2.0f * cameraMat[0]) / width);
+        cameraMatrix.m00 = (float)((-2.0f * proj_K[0]) / width);
         cameraMatrix.m01 = 0.0f;
-        cameraMatrix.m02 = (float)(1.0f - ((2.0f * cameraMat[2]) / width));
+        cameraMatrix.m02 = (float)(1.0f - ((2.0f * proj_K[2]) / width));
         cameraMatrix.m03 = 0.0f;
         cameraMatrix.m10 = 0.0f;
-        cameraMatrix.m11 = (float)((2.0f * cameraMat[4]) / height);
-        cameraMatrix.m12 = (float)(-1.0f + ((2.0f * cameraMat[5]) / height));
+        cameraMatrix.m11 = (float)((2.0f * proj_K[4]) / height);
+        cameraMatrix.m12 = (float)(-1.0f + ((2.0f * proj_K[5]) / height));
         cameraMatrix.m13 = 0.0f;
         cameraMatrix.m20 = 0.0f;
         cameraMatrix.m21 = 0.0f;
@@ -177,6 +184,24 @@ public class ProCamManager : MonoBehaviour {
         //mainProjector.worldToCameraMatrix = Matrix4x4.TRS(Vector3.right, Quaternion.identity, Vector3.one);
         //mainProjector.worldToCameraMatrix = Matrix4x4.identity;
 
+        //debug用
+        proj_R = new double[9];
+        proj_T = new double[3];
+
+        proj_R[0] = ExternalMatrix.m00;
+        proj_R[1] = ExternalMatrix.m01;
+        proj_R[2] = ExternalMatrix.m02;
+        proj_R[3] = ExternalMatrix.m10;
+        proj_R[4] = ExternalMatrix.m11;
+        proj_R[5] = ExternalMatrix.m12;
+        proj_R[6] = ExternalMatrix.m20;
+        proj_R[7] = ExternalMatrix.m21;
+        proj_R[8] = ExternalMatrix.m22;
+
+        proj_T[0] = ExternalMatrix.m03;
+        proj_T[1] = ExternalMatrix.m13;
+        proj_T[2] = ExternalMatrix.m23;
+
     }
 
     //プロジェクタの外部パラメータの更新
@@ -204,6 +229,21 @@ public class ProCamManager : MonoBehaviour {
 
         // set external matrix
         mainProjector.worldToCameraMatrix = ExternalMatrix;
+
+        //debug用
+        proj_R[0] = ExternalMatrix.m00;
+        proj_R[1] = ExternalMatrix.m01;
+        proj_R[2] = ExternalMatrix.m02;
+        proj_R[3] = ExternalMatrix.m10;
+        proj_R[4] = ExternalMatrix.m11;
+        proj_R[5] = ExternalMatrix.m12;
+        proj_R[6] = ExternalMatrix.m20;
+        proj_R[7] = ExternalMatrix.m21;
+        proj_R[8] = ExternalMatrix.m22;
+
+        proj_T[0] = ExternalMatrix.m03;
+        proj_T[1] = ExternalMatrix.m13;
+        proj_T[2] = ExternalMatrix.m23;
 
     }
 }

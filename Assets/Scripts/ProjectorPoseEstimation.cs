@@ -5,27 +5,32 @@ using System.Runtime.InteropServices;
 
 public class ProjectorPoseEstimation : MonoBehaviour {
 
-    [DllImport("WebCamera_DLL")]
+    [DllImport("WebCamera_DLL", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern IntPtr getCamera(int device_);
-    [DllImport("WebCamera_DLL")]
+    [DllImport("WebCamera_DLL", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern void setCameraProp(IntPtr camera, int width, int height, int fps);
-    [DllImport("WebCamera_DLL")]
+    [DllImport("WebCamera_DLL", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern void releaseCamera(IntPtr camera);
-    [DllImport("WebCamera_DLL")]
+    [DllImport("WebCamera_DLL", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern void getCameraTexture(IntPtr camera, IntPtr data);
 
-    [DllImport("ProjectorPoseEstimation_DLL2")]
-    private static extern IntPtr openProjectorEstimation(int camWidth, int camHeight, int proWidth, int proHeight);
-    [DllImport("ProjectorPoseEstimation_DLL2")]
+    [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    private static extern IntPtr openProjectorEstimation(int camWidth, int camHeight, int proWidth, int proHeight, string backgroundImgFile,
+                                                         int checkerRow, int checkerCol, int blockSize, int x_offset, int y_offset);
+    [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern void callloadParam(IntPtr projectorestimation, double[] initR, double[] initT);
-    [DllImport("ProjectorPoseEstimation_DLL2")]
+    [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern bool callfindProjectorPose_Corner(IntPtr projectorestimation, 
                                                                                  IntPtr cam_data,
                                                                                  double[] initR, double[] initT,
                                                                                  double[] dstR, double[] dstT,
                                                                                  int camCornerNum, double camMinDist, int projCornerNum, double projMinDist, int mode);
-    [DllImport("ProjectorPoseEstimation_DLL2")]
+    [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern void destroyAllWindows();
+
+    [DllImport("multiWindow", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    static extern void closeWindow(string windowName);
+
 
     public RenderTexture projectorImage;
     public WebCameraManager webcamManager;
@@ -43,6 +48,16 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     public int projCornerNum = 500;
     public int projMinDist = 10;
     public int mode = 2;
+
+    //背景画像ファイル
+    public string backgroundImgFile = "Assets/Image/bedsidemusic_1280_800.jpg";// Assets/Image/○○
+
+    //チェッカパターン情報
+    public int checkerRow = 10;
+    public int checkerCol = 17;
+    public int BlockSize = 64;
+    public int X_offset = 128;
+    public int Y_offset = 112;
 
     //ネイティブへのクラスポインタ
     private IntPtr projectorestimation;
@@ -79,7 +94,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
 
 	// Use this for initialization
 	void Awake () {
-        projectorestimation = openProjectorEstimation(camWidth, camHeight, proWidth, proHeight);
+        projectorestimation = openProjectorEstimation(camWidth, camHeight, proWidth, proHeight, backgroundImgFile, checkerRow, checkerCol, BlockSize, X_offset, Y_offset);
         //proj_texture = new Texture2D(projectorImage.width, projectorImage.height, TextureFormat.ARGB32, false);
 	}
 	
@@ -126,6 +141,9 @@ public class ProjectorPoseEstimation : MonoBehaviour {
                 initial_T = dst_T;
             }
         }
+        //WebCameraの初期化が終わっていたら、画像表示開始
+        else if (camera_ != System.IntPtr.Zero && pixels_ptr_ != System.IntPtr.Zero)
+            getCameraTexture(camera_, pixels_ptr_);
 	}
 
     public void initWebCamera(int camdevice, int fps, int cameraWidth, int cameraHeight)
@@ -153,6 +171,11 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     {
         pixels_handle_.Free();
         releaseCamera(camera_);
+
+        //closeWindow("Camera detected corners");
+        //closeWindow("Projector detected corners");
+        //closeWindow("web camera");
+
         destroyAllWindows();
     }
 

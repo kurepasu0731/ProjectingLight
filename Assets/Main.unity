@@ -329,6 +329,7 @@ MonoBehaviour:
   proWidth: 1280
   proHeight: 800
   displayNum: 2
+  procamManager: {fileID: 1438457454}
 --- !u!81 &601778530
 AudioListener:
   m_ObjectHideFlags: 0
@@ -482,6 +483,10 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 10
+--- !u!1 &890551263 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 100002, guid: 0aa3957d6619ea1489b31b2b8a28816d, type: 3}
+  m_PrefabInternal: {fileID: 1135010313}
 --- !u!1 &981825843
 GameObject:
   m_ObjectHideFlags: 0
@@ -645,31 +650,31 @@ Prefab:
     m_Modifications:
     - target: {fileID: 400002, guid: 0aa3957d6619ea1489b31b2b8a28816d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -0.12
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 0aa3957d6619ea1489b31b2b8a28816d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0.101
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 0aa3957d6619ea1489b31b2b8a28816d, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.53
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 0aa3957d6619ea1489b31b2b8a28816d, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.46469533
+      value: -0.35977277
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 0aa3957d6619ea1489b31b2b8a28816d, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.48148796
+      value: -0.5699195
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 0aa3957d6619ea1489b31b2b8a28816d, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.5498123
+      value: -0.62580866
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 0aa3957d6619ea1489b31b2b8a28816d, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.49993402
+      value: 0.39257967
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 0aa3957d6619ea1489b31b2b8a28816d, type: 3}
       propertyPath: m_RootOrder
@@ -700,6 +705,10 @@ Prefab:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 100000, guid: 0aa3957d6619ea1489b31b2b8a28816d, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 100002, guid: 0aa3957d6619ea1489b31b2b8a28816d, type: 3}
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
@@ -970,6 +979,10 @@ MonoBehaviour:
   mainCamera: {fileID: 504346388}
   mainProjector: {fileID: 601778533}
   maxDisplayCount: 2
+  proj_K: []
+  proj_dist: []
+  proj_R: []
+  proj_T: []
 --- !u!4 &1438457455
 Transform:
   m_ObjectHideFlags: 0
@@ -1020,7 +1033,13 @@ MonoBehaviour:
   camMinDist: 5
   projCornerNum: 500
   projMinDist: 10
-  mode: 2
+  mode: 3
+  backgroundImgFile: Assets/Image/chessPattern_18_11_64_48.png
+  checkerRow: 10
+  checkerCol: 17
+  BlockSize: 64
+  X_offset: 128
+  Y_offset: 112
   isTrack: 0
 --- !u!4 &1514692223
 Transform:
@@ -1064,6 +1083,7 @@ MonoBehaviour:
   window: {fileID: 601778529}
   procamManager: {fileID: 1438457454}
   projectorposeestimationManager: {fileID: 1514692222}
+  TargetObj: {fileID: 890551263}
 --- !u!4 &1633431690
 Transform:
   m_ObjectHideFlags: 0
@@ -1195,7 +1215,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 602566e830d54db48abf3b6f73ca3c9b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 2f646ff5b10a6fb43a57f3d5445c0bbd, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

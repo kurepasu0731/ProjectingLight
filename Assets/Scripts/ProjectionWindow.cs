@@ -16,6 +16,12 @@ public class ProjectionWindow : MonoBehaviour {
     [DllImport("multiWindow", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     static extern void fullWindow(string windowName, int displayNum, System.IntPtr data, int width, int height);
 
+    [DllImport("undistort", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    static extern void undistort(System.IntPtr src_data, System.IntPtr dst_data, int width, int height, double[] K, double[] dist);
+
+    [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    private static extern void destroyAllWindows();
+
     //[DllImport("ExternalWindow", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     //static extern IntPtr openWindow(string windowName, int displayNum, int width, int height);
     //[DllImport("ExternalWindow", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
@@ -31,6 +37,8 @@ public class ProjectionWindow : MonoBehaviour {
     public int proHeight = 800;
     private string windowName = "Projection";
     public int displayNum = 1;
+
+    public ProCamManager procamManager;
 
     private Texture2D tex;
 
@@ -75,6 +83,9 @@ public class ProjectionWindow : MonoBehaviour {
             texturePixelsHandle_ = GCHandle.Alloc(texturePixels_, GCHandleType.Pinned);
             texturePixelsPtr_ = texturePixelsHandle_.AddrOfPinnedObject();
 
+            //投影するとゆがむので、(逆方向に)歪ませる
+            undistort(texturePixelsPtr_, texturePixelsPtr_, proWidth, proHeight, procamManager.proj_K, procamManager.proj_dist);
+
             // Show a window
             fullWindow(windowName, displayNum, texturePixelsPtr_, proWidth, proHeight);
             //drawTextureFullWindow(window_, texturePixelsPtr_);
@@ -117,6 +128,7 @@ public class ProjectionWindow : MonoBehaviour {
     void OnApplicationQuit()
     {
         closeWindow(windowName);
+        //destroyAllWindows();
         //destroyWindow(window_);
     }
 }

@@ -6,12 +6,13 @@ public class gui : MonoBehaviour {
     public ProjectionWindow window;
     public ProCamManager procamManager;
     public ProjectorPoseEstimation projectorposeestimationManager;
+    public GameObject TargetObj;
 
     private string proWidth = "1280";
     private string proHeight = "800";
     private string camWidth = "1920";
     private string camHeight = "1080";
-    private string num = "1";
+    private string num = "2";
 
 	// Use this for initialization
 	void Start () {
@@ -35,10 +36,14 @@ public class gui : MonoBehaviour {
         {
             window.callProjection(int.Parse(proWidth), int.Parse(proHeight), int.Parse(num));     // 投影の切り替え
         }
-        if (GUI.Button(new Rect(20, 90, 150, 20), "プロジェクタトラッキング開始"))
+        if (GUI.Button(new Rect(170, 50, 150, 20), "ドラえもん 表示/非表示"))
+        {
+            TargetObj.SetActive(!TargetObj.activeInHierarchy);
+        }
+        if (GUI.Button(new Rect(170, 70, 150, 20), "tracking start/stop"))
         {
             //procamManager.callPCLViewer();
-            projectorposeestimationManager.isTrack = true;
+            projectorposeestimationManager.isTrack = !projectorposeestimationManager.isTrack;
         }
 
 
