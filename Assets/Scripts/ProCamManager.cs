@@ -22,9 +22,17 @@ public class ProCamManager : MonoBehaviour {
     //プロジェクタの内部、歪み係数
     public double[] proj_K;
     public double[] proj_dist;
+    
+    //初期位置(表示用)
+    public double[] initialT;
+
     //プロジェクタの外部(確認表示用)
     public double[] proj_R;
     public double[] proj_T;
+
+    //プロジェクタとカメラの距離(tのノルム)
+    public double nolm = 0.0;
+
 
 	// Use this for initialization
 	void Start () {
@@ -202,6 +210,14 @@ public class ProCamManager : MonoBehaviour {
         proj_T[1] = ExternalMatrix.m13;
         proj_T[2] = ExternalMatrix.m23;
 
+        nolm = Mathf.Sqrt(ExternalMatrix.m03 * ExternalMatrix.m03 + ExternalMatrix.m13 * ExternalMatrix.m13 + ExternalMatrix.m23 * ExternalMatrix.m23);
+
+        //初期位置(表示用)
+        initialT = new double[3];
+        initialT[0] = ExternalMatrix.m03;
+        initialT[1] = ExternalMatrix.m13;
+        initialT[2] = ExternalMatrix.m23;
+
     }
 
     //プロジェクタの外部パラメータの更新
@@ -244,6 +260,8 @@ public class ProCamManager : MonoBehaviour {
         proj_T[0] = ExternalMatrix.m03;
         proj_T[1] = ExternalMatrix.m13;
         proj_T[2] = ExternalMatrix.m23;
+
+        nolm = Mathf.Sqrt(ExternalMatrix.m03 * ExternalMatrix.m03 + ExternalMatrix.m13 * ExternalMatrix.m13 + ExternalMatrix.m23 * ExternalMatrix.m23);
 
     }
 }
