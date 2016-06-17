@@ -27,12 +27,17 @@ public class ProjectorPoseEstimation : MonoBehaviour {
                                                                                  int camCornerNum, double camMinDist, int projCornerNum, double projMinDist, int mode);
     [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern void destroyAllWindows();
+    [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    private static extern void createCameraMask(IntPtr projectorestimation, IntPtr cam_data);
+
 
     [DllImport("multiWindow", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     static extern void closeWindow(string windowName);
 
 
-    public RenderTexture projectorImage;
+    public RenderTexture projectorImage; //プロジェクタ投影画像
+    public RenderTexture cameraMask; //カメラマスク画像
+
     public WebCameraManager webcamManager;
     public ProCamManager procamManager;
 
@@ -82,10 +87,11 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     private GCHandle pixels_handle_;
     private IntPtr pixels_ptr_;
 
-    ////Webカメラの画像のポインタ
-    //private Color32[] texturePixels_;
-    //private GCHandle texturePixelsHandle_;
-    //private IntPtr texturePixelsPtr_;
+    //マスク画像のポインタ
+    private Texture2D mask_texture;
+    private Color32[] texturePixels_;
+    private GCHandle texturePixelsHandle_;
+    private IntPtr texturePixelsPtr_;
     //プロジェクタの画像のポインタ
     private Texture2D proj_texture;
     private Color32[] proj_texturePixels_;
@@ -95,17 +101,13 @@ public class ProjectorPoseEstimation : MonoBehaviour {
 	// Use this for initialization
 	void Awake () {
         projectorestimation = openProjectorEstimation(camWidth, camHeight, proWidth, proHeight, backgroundImgFile, checkerRow, checkerCol, BlockSize, X_offset, Y_offset);
+        mask_texture = new Texture2D(cameraMask.width, cameraMask.height, TextureFormat.ARGB32, false);
         proj_texture = new Texture2D(projectorImage.width, projectorImage.height, TextureFormat.ARGB32, false);
-	}
+    }
 	
 	// Update is called once per frame
 	void Update () {
 
-        ////webcameraのTexture2Dをポインタに変換
-        //// Convert texture to ptr
-        //texturePixels_ = webcamManager.getWebCamTexture().GetPixels32();
-        //texturePixelsHandle_ = GCHandle.Alloc(texturePixels_, GCHandleType.Pinned);
-        //texturePixelsPtr_ = texturePixelsHandle_.AddrOfPinnedObject();
         //プロジェクタのRenderTexture をTexture2Dに変換
         RenderTexture.active = projectorImage;
         proj_texture.ReadPixels(new Rect(0.0f, 0.0f, projectorImage.width, projectorImage.height), 0, 0);
@@ -177,6 +179,21 @@ public class ProjectorPoseEstimation : MonoBehaviour {
         //closeWindow("web camera");
 
         destroyAllWindows();
+    }
+
+    //カメラのマスク画像の生成
+    public void createCameraMaskImage()
+    {
+        //maskのTexture2Dをポインタに変換
+        RenderTexture.active = cameraMask;
+        mask_texture.ReadPixels(new Rect(0.0f, 0.0f, cameraMask.width, cameraMask.height), 0, 0);
+        mask_texture.Apply();
+        // Convert texture to ptr
+        texturePixels_ = mask_texture.GetPixels32();
+        texturePixelsHandle_ = GCHandle.Alloc(texturePixels_, GCHandleType.Pinned);
+        texturePixelsPtr_ = texturePixelsHandle_.AddrOfPinnedObject();
+
+        createCameraMask(projectorestimation, texturePixelsPtr_);
     }
 
 }

@@ -31,6 +31,7 @@ public class gui : MonoBehaviour {
         {
             procamManager.loadParam(int.Parse(camWidth), int.Parse(camHeight), int.Parse(proWidth), int.Parse(proHeight));
             projectorposeestimationManager.init(0, 30, int.Parse(camWidth), int.Parse(camHeight));
+            projectorposeestimationManager.createCameraMaskImage();
         }
         if (GUI.Button(new Rect(20, 70, 150, 20), "投影"))
         {
