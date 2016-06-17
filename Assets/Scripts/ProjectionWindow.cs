@@ -40,6 +40,9 @@ public class ProjectionWindow : MonoBehaviour {
 
     public ProCamManager procamManager;
 
+    public RenderTexture shadowImage;
+    public Material shadowMat;
+
     private Texture2D tex;
 
     private Color32[] texturePixels_;
@@ -91,6 +94,9 @@ public class ProjectionWindow : MonoBehaviour {
             //drawTextureFullWindow(window_, texturePixelsPtr_);
 
             texturePixelsHandle_.Free();
+
+            //影画像のレンダリング
+            Graphics.Blit(ProjectorImage, shadowImage, shadowMat);
 
             //RenderTexture.active = null;
             //RenderTexture.ReleaseTemporary(camtex);

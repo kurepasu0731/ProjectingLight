@@ -20,8 +20,8 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern void callloadParam(IntPtr projectorestimation, double[] initR, double[] initT);
     [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-    private static extern bool callfindProjectorPose_Corner(IntPtr projectorestimation, 
-                                                                                 IntPtr cam_data,
+    private static extern bool callfindProjectorPose_Corner(IntPtr projectorestimation,
+                                                                                 IntPtr cam_data, IntPtr prj_data,
                                                                                  double[] initR, double[] initT,
                                                                                  double[] dstR, double[] dstT,
                                                                                  int camCornerNum, double camMinDist, int projCornerNum, double projMinDist, int mode);
@@ -86,16 +86,16 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     //private Color32[] texturePixels_;
     //private GCHandle texturePixelsHandle_;
     //private IntPtr texturePixelsPtr_;
-    ////プロジェクタの画像のポインタ
-    //private Texture2D proj_texture;
-    //private Color32[] proj_texturePixels_;
-    //private GCHandle proj_texturePixelsHandle_;
-    //private IntPtr proj_texturePixelsPtr_;
+    //プロジェクタの画像のポインタ
+    private Texture2D proj_texture;
+    private Color32[] proj_texturePixels_;
+    private GCHandle proj_texturePixelsHandle_;
+    private IntPtr proj_texturePixelsPtr_;
 
 	// Use this for initialization
 	void Awake () {
         projectorestimation = openProjectorEstimation(camWidth, camHeight, proWidth, proHeight, backgroundImgFile, checkerRow, checkerCol, BlockSize, X_offset, Y_offset);
-        //proj_texture = new Texture2D(projectorImage.width, projectorImage.height, TextureFormat.ARGB32, false);
+        proj_texture = new Texture2D(projectorImage.width, projectorImage.height, TextureFormat.ARGB32, false);
 	}
 	
 	// Update is called once per frame
@@ -106,14 +106,14 @@ public class ProjectorPoseEstimation : MonoBehaviour {
         //texturePixels_ = webcamManager.getWebCamTexture().GetPixels32();
         //texturePixelsHandle_ = GCHandle.Alloc(texturePixels_, GCHandleType.Pinned);
         //texturePixelsPtr_ = texturePixelsHandle_.AddrOfPinnedObject();
-        ////プロジェクタのRenderTexture をTexture2Dに変換
-        //RenderTexture.active = projectorImage;
-        //proj_texture.ReadPixels(new Rect(0.0f, 0.0f, projectorImage.width, projectorImage.height), 0, 0);
-        //proj_texture.Apply();
-        ////ポインタに変換
-        //proj_texturePixels_ = proj_texture.GetPixels32();
-        //proj_texturePixelsHandle_ = GCHandle.Alloc(proj_texturePixels_, GCHandleType.Pinned);
-        //proj_texturePixelsPtr_ = proj_texturePixelsHandle_.AddrOfPinnedObject();
+        //プロジェクタのRenderTexture をTexture2Dに変換
+        RenderTexture.active = projectorImage;
+        proj_texture.ReadPixels(new Rect(0.0f, 0.0f, projectorImage.width, projectorImage.height), 0, 0);
+        proj_texture.Apply();
+        //ポインタに変換
+        proj_texturePixels_ = proj_texture.GetPixels32();
+        proj_texturePixelsHandle_ = GCHandle.Alloc(proj_texturePixels_, GCHandleType.Pinned);
+        proj_texturePixelsPtr_ = proj_texturePixelsHandle_.AddrOfPinnedObject();
 
         if (isTrack == true)
         {
@@ -121,16 +121,16 @@ public class ProjectorPoseEstimation : MonoBehaviour {
             getCameraTexture(camera_, pixels_ptr_);
 
             //位置推定
+            //result = callfindProjectorPose_Corner(projectorestimation,
+            //    pixels_ptr_,
+            //    initial_R, initial_T, dst_R, dst_T,
+            //    camCornerNum, camMinDist, projCornerNum, projMinDist, mode);
+
+            //位置推定
             result = callfindProjectorPose_Corner(projectorestimation,
-                pixels_ptr_, 
+                pixels_ptr_, proj_texturePixelsPtr_,  
                 initial_R, initial_T, dst_R, dst_T,
                 camCornerNum, camMinDist, projCornerNum, projMinDist, mode);
-
-            ////位置推定
-            //result = callfindProjectorPose_Corner(projectorestimation,
-            //    texturePixelsPtr_, proj_texturePixelsPtr_,  //->OpenCV で扱うテクスチャ画と Unity 側のテクスチャ画の x 軸反転と、RGBA <-> BGRA 変換を忘れずに
-            //    initial_R, initial_T, dst_R, dst_T,
-            //    camCornerNum, camMinDist, projCornerNum, projMinDist, 2);
 
             if (result)
             {

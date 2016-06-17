@@ -358,6 +358,8 @@ MonoBehaviour:
   proHeight: 800
   displayNum: 2
   procamManager: {fileID: 1438457454}
+  shadowImage: {fileID: 8400000, guid: 2a955ba5d1e98f440a70f52b173181a4, type: 2}
+  shadowMat: {fileID: 2100000, guid: 80dcd74f38d52bb43b2acbb528e2a85e, type: 2}
 --- !u!81 &601778530
 AudioListener:
   m_ObjectHideFlags: 0
@@ -601,7 +603,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 890551263}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a40a508dfc2d800498ca797668b6d9c2, type: 3}
   m_Name: 
@@ -776,7 +778,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 890551263}
   m_LocalRotation: {x: -0.556023, y: -0.43685058, z: -0.43685034, w: 0.5560233}
-  m_LocalPosition: {x: -0.103, y: -0.055, z: 0.389}
+  m_LocalPosition: {x: -0.11, y: -0.05, z: 0.3939}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 129509143}
@@ -1417,7 +1419,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5312d79667cf32f48a8f1269ffc92d95, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  projectorImage: {fileID: 8400000, guid: e08d5cdd6d97a754aa7d1474b9811e8c, type: 2}
+  projectorImage: {fileID: 8400000, guid: 2a955ba5d1e98f440a70f52b173181a4, type: 2}
   webcamManager: {fileID: 1204457860}
   procamManager: {fileID: 1438457454}
   camWidth: 1920
@@ -1428,8 +1430,8 @@ MonoBehaviour:
   camMinDist: 5
   projCornerNum: 500
   projMinDist: 10
-  mode: 3
-  backgroundImgFile: Assets/Image/chessPattern_18_11_64_48.png
+  mode: 1
+  backgroundImgFile: Assets/Image/1234.png
   checkerRow: 10
   checkerCol: 17
   BlockSize: 64
@@ -1656,7 +1658,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 2f646ff5b10a6fb43a57f3d5445c0bbd, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 1d00086a7abaf7245a597d862feba0b2, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
