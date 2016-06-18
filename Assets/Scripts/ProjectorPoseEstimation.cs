@@ -24,7 +24,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
                                                                                  IntPtr cam_data, IntPtr prj_data,
                                                                                  double[] initR, double[] initT,
                                                                                  double[] dstR, double[] dstT,
-                                                                                 int camCornerNum, double camMinDist, int projCornerNum, double projMinDist, int mode);
+                                                                                 int camCornerNum, double camMinDist, int projCornerNum, double projMinDist, float thresh, int mode);
     [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern void destroyAllWindows();
     [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
@@ -52,6 +52,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     public int camMinDist = 5;
     public int projCornerNum = 500;
     public int projMinDist = 10;
+    public float thresh = 100;
     public int mode = 2;
 
     //背景画像ファイル
@@ -132,7 +133,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
             result = callfindProjectorPose_Corner(projectorestimation,
                 pixels_ptr_, proj_texturePixelsPtr_,  
                 initial_R, initial_T, dst_R, dst_T,
-                camCornerNum, camMinDist, projCornerNum, projMinDist, mode);
+                camCornerNum, camMinDist, projCornerNum, projMinDist, thresh, mode);
 
             if (result)
             {
@@ -146,6 +147,9 @@ public class ProjectorPoseEstimation : MonoBehaviour {
         //WebCameraの初期化が終わっていたら、画像表示開始
         else if (camera_ != System.IntPtr.Zero && pixels_ptr_ != System.IntPtr.Zero)
             getCameraTexture(camera_, pixels_ptr_);
+
+        proj_texturePixelsHandle_.Free();
+
 	}
 
     public void initWebCamera(int camdevice, int fps, int cameraWidth, int cameraHeight)
@@ -194,6 +198,9 @@ public class ProjectorPoseEstimation : MonoBehaviour {
         texturePixelsPtr_ = texturePixelsHandle_.AddrOfPinnedObject();
 
         createCameraMask(projectorestimation, texturePixelsPtr_);
+
+        RenderTexture.active = null;
+
     }
 
 }

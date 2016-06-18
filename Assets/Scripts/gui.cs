@@ -43,7 +43,7 @@ public class gui : MonoBehaviour {
         }
         if (GUI.Button(new Rect(170, 70, 150, 20), "tracking start/stop"))
         {
-            //procamManager.callPCLViewer();
+            projectorposeestimationManager.createCameraMaskImage();
             projectorposeestimationManager.isTrack = !projectorposeestimationManager.isTrack;
         }
 
