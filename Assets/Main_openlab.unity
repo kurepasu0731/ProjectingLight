@@ -389,7 +389,7 @@ Camera:
   m_GameObject: {fileID: 601778528}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 3
+  m_ClearFlags: 2
   m_BackGroundColor: {r: 0, g: 0, b: 0, a: 1}
   m_NormalizedViewPortRect:
     serializedVersion: 2
@@ -603,7 +603,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 890551263}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a40a508dfc2d800498ca797668b6d9c2, type: 3}
   m_Name: 
@@ -695,7 +695,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1074294894
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1084,7 +1084,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 100004, guid: f5f7e00efce43d14e8031b86e15adf69, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 400004, guid: f5f7e00efce43d14e8031b86e15adf69, type: 2}
       propertyPath: m_LocalScale.x
@@ -1420,6 +1420,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   projectorImage: {fileID: 8400000, guid: 2a955ba5d1e98f440a70f52b173181a4, type: 2}
+  cameraMask: {fileID: 8400000, guid: 55315e750acfcca498563a81a0445dcc, type: 2}
   webcamManager: {fileID: 1204457860}
   procamManager: {fileID: 1438457454}
   camWidth: 1920
@@ -1430,6 +1431,7 @@ MonoBehaviour:
   camMinDist: 5
   projCornerNum: 500
   projMinDist: 10
+  thresh: 100
   mode: 1
   backgroundImgFile: Assets/Image/1234.png
   checkerRow: 10

@@ -12,7 +12,9 @@ public class gui : MonoBehaviour {
     private string proHeight = "800";
     private string camWidth = "1920";
     private string camHeight = "1080";
-    private string num = "2";
+    private string num = "0";
+
+    private bool threshFlag = true;
 
 	// Use this for initialization
 	void Start () {
@@ -45,6 +47,19 @@ public class gui : MonoBehaviour {
         {
             projectorposeestimationManager.createCameraMaskImage();
             projectorposeestimationManager.isTrack = !projectorposeestimationManager.isTrack;
+        }
+        if (GUI.Button(new Rect(320, 70, 150, 20), "thresh 切り替え"))
+        {
+            if (threshFlag == true)
+            {
+                projectorposeestimationManager.thresh = 10;
+            }
+            else
+            {
+                projectorposeestimationManager.thresh = 50;
+            }
+            threshFlag = !threshFlag;
+
         }
 
 

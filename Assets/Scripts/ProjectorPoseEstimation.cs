@@ -16,7 +16,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
 
     [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern IntPtr openProjectorEstimation(int camWidth, int camHeight, int proWidth, int proHeight, string backgroundImgFile,
-                                                         int checkerRow, int checkerCol, int blockSize, int x_offset, int y_offset);
+                                                         int checkerRow, int checkerCol, int blockSize, int x_offset, int y_offset, double thresh);
     [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern void callloadParam(IntPtr projectorestimation, double[] initR, double[] initT);
     [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
@@ -24,11 +24,18 @@ public class ProjectorPoseEstimation : MonoBehaviour {
                                                                                  IntPtr cam_data, IntPtr prj_data,
                                                                                  double[] initR, double[] initT,
                                                                                  double[] dstR, double[] dstT,
-                                                                                 int camCornerNum, double camMinDist, int projCornerNum, double projMinDist, float thresh, int mode);
+                                                                                 int camCornerNum, double camMinDist, int projCornerNum, double projMinDist, double thresh, int mode);
     [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern void destroyAllWindows();
     [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern void createCameraMask(IntPtr projectorestimation, IntPtr cam_data);
+
+    public delegate void DebugLogDelegate(string str);
+    DebugLogDelegate debugLogFunc = msg => Debug.Log(msg);
+
+    //[DllImport("ProjectorPoseEstimation_DLL2")]
+    [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void set_debug_log_func(DebugLogDelegate func);
 
 
     [DllImport("multiWindow", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
@@ -52,7 +59,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     public int camMinDist = 5;
     public int projCornerNum = 500;
     public int projMinDist = 10;
-    public float thresh = 100;
+    public double thresh = 50;
     public int mode = 2;
 
     //背景画像ファイル
@@ -101,11 +108,11 @@ public class ProjectorPoseEstimation : MonoBehaviour {
 
 	// Use this for initialization
 	void Awake () {
-        projectorestimation = openProjectorEstimation(camWidth, camHeight, proWidth, proHeight, backgroundImgFile, checkerRow, checkerCol, BlockSize, X_offset, Y_offset);
+        projectorestimation = openProjectorEstimation(camWidth, camHeight, proWidth, proHeight, backgroundImgFile, checkerRow, checkerCol, BlockSize, X_offset, Y_offset, thresh);
         mask_texture = new Texture2D(cameraMask.width, cameraMask.height, TextureFormat.ARGB32, false);
         proj_texture = new Texture2D(projectorImage.width, projectorImage.height, TextureFormat.ARGB32, false);
     }
-	
+
 	// Update is called once per frame
 	void Update () {
 
@@ -146,7 +153,10 @@ public class ProjectorPoseEstimation : MonoBehaviour {
         }
         //WebCameraの初期化が終わっていたら、画像表示開始
         else if (camera_ != System.IntPtr.Zero && pixels_ptr_ != System.IntPtr.Zero)
+        {
             getCameraTexture(camera_, pixels_ptr_);
+
+        }
 
         proj_texturePixelsHandle_.Free();
 
@@ -201,6 +211,16 @@ public class ProjectorPoseEstimation : MonoBehaviour {
 
         RenderTexture.active = null;
 
+    }
+
+    public void OnEnable()
+    {
+        set_debug_log_func(debugLogFunc);
+    }
+
+    public void OnDisable()
+    {
+        set_debug_log_func(null);
     }
 
 }
