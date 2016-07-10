@@ -17,7 +17,7 @@ Shader "Custom/ProjectorDistortion" {
 	
 	float4 internalParam; //fx, fy, cx, cy
 	float4 distortion; //k1, k2, p1, p2
-	float4 resolution; // width, height
+	float4 resolution; // width, height, 0, 0
 	
 	v2f vert( appdata_img v ) 
 	{
@@ -42,8 +42,8 @@ Shader "Custom/ProjectorDistortion" {
 		distCoords.y = realCoords.y * (1 - distortion.x * r2 - distortion.y * r2*r2) - distortion.z * (r2 + 2 * realCoords.y * realCoords.y) - 2 * distortion.w * realCoords.x * realCoords.y;
 		
 		//uv‚É–ß‚·
-		distCoords.x = (distCoords.x * internalParam.x + internalParam.z) / 1280;
-		distCoords.y = (distCoords.y * internalParam.y + internalParam.w) / 800;
+		distCoords.x = (distCoords.x * internalParam.x + internalParam.z) / resolution.x;
+		distCoords.y = (distCoords.y * internalParam.y + internalParam.w) / resolution.y;
 		//distCoords.y = 1 - ((distCoords.y * internalParam.y + pw) / 800);
 
 		half4 color = tex2D (_MainTex, distCoords);	 

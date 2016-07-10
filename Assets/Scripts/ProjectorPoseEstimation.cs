@@ -16,15 +16,23 @@ public class ProjectorPoseEstimation : MonoBehaviour {
 
     [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern IntPtr openProjectorEstimation(int camWidth, int camHeight, int proWidth, int proHeight, string backgroundImgFile,
-                                                         int checkerRow, int checkerCol, int blockSize, int x_offset, int y_offset, double thresh);
+                                                         int checkerRow, int checkerCol, int blockSize, int x_offset, int y_offset);
     [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern void callloadParam(IntPtr projectorestimation, double[] initR, double[] initT);
+    //プロジェクタ画像更新なし
     [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern bool callfindProjectorPose_Corner(IntPtr projectorestimation,
-                                                                                 IntPtr cam_data, IntPtr prj_data,
+                                                                                 IntPtr cam_data,
                                                                                  double[] initR, double[] initT,
                                                                                  double[] dstR, double[] dstT,
                                                                                  int camCornerNum, double camMinDist, int projCornerNum, double projMinDist, double thresh, int mode);
+    //プロジェクタ画像更新入り
+    //[DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    //private static extern bool callfindProjectorPose_Corner(IntPtr projectorestimation,
+    //                                                                             IntPtr cam_data, IntPtr prj_data,
+    //                                                                             double[] initR, double[] initT,
+    //                                                                             double[] dstR, double[] dstT,
+    //                                                                             int camCornerNum, double camMinDist, int projCornerNum, double projMinDist, double thresh, int mode);
     [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern void destroyAllWindows();
     [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
@@ -101,46 +109,48 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     private GCHandle texturePixelsHandle_;
     private IntPtr texturePixelsPtr_;
     //プロジェクタの画像のポインタ
-    private Texture2D proj_texture;
-    private Color32[] proj_texturePixels_;
-    private GCHandle proj_texturePixelsHandle_;
-    private IntPtr proj_texturePixelsPtr_;
+    //private Texture2D proj_texture;
+    //private Color32[] proj_texturePixels_;
+    //private GCHandle proj_texturePixelsHandle_;
+    //private IntPtr proj_texturePixelsPtr_;
 
 	// Use this for initialization
 	void Awake () {
-        projectorestimation = openProjectorEstimation(camWidth, camHeight, proWidth, proHeight, backgroundImgFile, checkerRow, checkerCol, BlockSize, X_offset, Y_offset, thresh);
+        projectorestimation = openProjectorEstimation(camWidth, camHeight, proWidth, proHeight, backgroundImgFile, checkerRow, checkerCol, BlockSize, X_offset, Y_offset);
         mask_texture = new Texture2D(cameraMask.width, cameraMask.height, TextureFormat.ARGB32, false);
-        proj_texture = new Texture2D(projectorImage.width, projectorImage.height, TextureFormat.ARGB32, false);
+        ////プロジェクタ画像更新入りの場合、必要
+        //proj_texture = new Texture2D(projectorImage.width, projectorImage.height, TextureFormat.ARGB32, false);
     }
 
 	// Update is called once per frame
 	void Update () {
 
-        //プロジェクタのRenderTexture をTexture2Dに変換
-        RenderTexture.active = projectorImage;
-        proj_texture.ReadPixels(new Rect(0.0f, 0.0f, projectorImage.width, projectorImage.height), 0, 0);
-        proj_texture.Apply();
-        //ポインタに変換
-        proj_texturePixels_ = proj_texture.GetPixels32();
-        proj_texturePixelsHandle_ = GCHandle.Alloc(proj_texturePixels_, GCHandleType.Pinned);
-        proj_texturePixelsPtr_ = proj_texturePixelsHandle_.AddrOfPinnedObject();
+        ////プロジェクタ画像更新入りの場合、必要
+        ////プロジェクタのRenderTexture をTexture2Dに変換
+        //RenderTexture.active = projectorImage;
+        //proj_texture.ReadPixels(new Rect(0.0f, 0.0f, projectorImage.width, projectorImage.height), 0, 0);
+        //proj_texture.Apply();
+        ////ポインタに変換
+        //proj_texturePixels_ = proj_texture.GetPixels32();
+        //proj_texturePixelsHandle_ = GCHandle.Alloc(proj_texturePixels_, GCHandleType.Pinned);
+        //proj_texturePixelsPtr_ = proj_texturePixelsHandle_.AddrOfPinnedObject();
 
         if (isTrack == true)
         {
             //カメラの画像取ってくる
             getCameraTexture(camera_, pixels_ptr_);
 
-            //位置推定
-            //result = callfindProjectorPose_Corner(projectorestimation,
-            //    pixels_ptr_,
-            //    initial_R, initial_T, dst_R, dst_T,
-            //    camCornerNum, camMinDist, projCornerNum, projMinDist, mode);
-
-            //位置推定
+            //位置推定(プロジェクタ画像更新なし)
             result = callfindProjectorPose_Corner(projectorestimation,
-                pixels_ptr_, proj_texturePixelsPtr_,  
+                pixels_ptr_,
                 initial_R, initial_T, dst_R, dst_T,
                 camCornerNum, camMinDist, projCornerNum, projMinDist, thresh, mode);
+
+            //位置推定(プロジェクタ画像更新入り)
+            //result = callfindProjectorPose_Corner(projectorestimation,
+            //    pixels_ptr_, proj_texturePixelsPtr_,  
+            //    initial_R, initial_T, dst_R, dst_T,
+            //    camCornerNum, camMinDist, projCornerNum, projMinDist, thresh, mode);
 
             if (result)
             {
@@ -158,7 +168,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
 
         }
 
-        proj_texturePixelsHandle_.Free();
+        //proj_texturePixelsHandle_.Free();
 
 	}
 

@@ -36,10 +36,13 @@ namespace UnityStandardAssets.ImageEffects
                 return;
             }
 
-            cameraDistortionMaterial.SetVector("internalParam", new Vector4((float)procamManager.proj_K[0], (float)procamManager.proj_K[4], (float)procamManager.proj_K[2], (float)procamManager.proj_K[5]));
-            cameraDistortionMaterial.SetVector("distortion", new Vector4((float)procamManager.proj_dist[0], (float)procamManager.proj_dist[1], (float)procamManager.proj_dist[2], (float)procamManager.proj_dist[3]));
-            cameraDistortionMaterial.SetVector("resolution", new Vector4((float)projWidth, (float)projHeight, 0f, 0f));
-            Graphics.Blit(source, destination, cameraDistortionMaterial);
+            if (procamManager.isloadParam)
+            {
+                cameraDistortionMaterial.SetVector("internalParam", new Vector4((float)procamManager.proj_K[0], (float)procamManager.proj_K[4], (float)procamManager.proj_K[2], (float)procamManager.proj_K[5]));
+                cameraDistortionMaterial.SetVector("distortion", new Vector4((float)procamManager.proj_dist[0], (float)procamManager.proj_dist[1], (float)procamManager.proj_dist[2], (float)procamManager.proj_dist[3]));
+                cameraDistortionMaterial.SetVector("resolution", new Vector4((float)projWidth, (float)projHeight, 0f, 0f));
+                Graphics.Blit(source, destination, cameraDistortionMaterial);
+            }
         }
     }
 }
