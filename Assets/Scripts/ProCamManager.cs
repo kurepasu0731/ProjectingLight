@@ -19,6 +19,9 @@ public class ProCamManager : MonoBehaviour {
 
     public int maxDisplayCount = 2;
     
+    //パラメータを読み込んだかどうか
+    public bool isloadParam = false;
+
     //プロジェクタの内部、歪み係数
     public double[] proj_K;
     public double[] proj_dist;
@@ -60,6 +63,7 @@ public class ProCamManager : MonoBehaviour {
     {
         setCameraMatrix(camWidth, camHeight);
         setProjectorMatrix(proWidth, proHeight);
+        isloadParam = true;
     }
 
     // パラメータを読み込み,カメラに設定
