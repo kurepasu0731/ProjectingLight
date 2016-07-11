@@ -349,6 +349,7 @@ GameObject:
   - 92: {fileID: 601778531}
   - 81: {fileID: 601778530}
   - 114: {fileID: 601778529}
+  - 114: {fileID: 601778535}
   m_Layer: 0
   m_Name: MainProjector
   m_TagString: Untagged
@@ -422,7 +423,7 @@ Camera:
     serializedVersion: 2
     m_Bits: 256
   m_RenderingPath: -1
-  m_TargetTexture: {fileID: 8400000, guid: e08d5cdd6d97a754aa7d1474b9811e8c, type: 2}
+  m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 1
   m_TargetEye: 3
   m_HDR: 0
@@ -442,6 +443,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 9
+--- !u!114 &601778535
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 601778528}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d69b4483acaa688488d785a5d77e0fea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cameraDistortionShader: {fileID: 4800000, guid: 2f6ab9c69763e034d949e28f01ed93f6,
+    type: 3}
+  procamManager: {fileID: 1438457454}
+  projWidth: 1280
+  projHeight: 800
 --- !u!1 &644313506
 GameObject:
   m_ObjectHideFlags: 0
@@ -508,7 +525,7 @@ Camera:
     serializedVersion: 2
     m_Bits: 32
   m_RenderingPath: -1
-  m_TargetTexture: {fileID: 8400000, guid: e08d5cdd6d97a754aa7d1474b9811e8c, type: 2}
+  m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 1
   m_TargetEye: 3
   m_HDR: 0
@@ -1389,6 +1406,7 @@ MonoBehaviour:
   mainCamera: {fileID: 504346388}
   mainProjector: {fileID: 601778533}
   maxDisplayCount: 2
+  isloadParam: 0
   proj_K: []
   proj_dist: []
   initialT: []

@@ -147,15 +147,9 @@ public class ProjectorPoseEstimation : MonoBehaviour {
             check_time = Time.realtimeSinceStartup * 1000 - check_time;
             Debug.Log("getCameraTexture :" + check_time + "ms");
 
-            //位置推定
-            //result = callfindProjectorPose_Corner(projectorestimation,
-            //    pixels_ptr_,
-            //    initial_R, initial_T, dst_R, dst_T,
-            //    camCornerNum, camMinDist, projCornerNum, projMinDist, mode);
-
             //処理時間計測
             check_time = Time.realtimeSinceStartup * 1000;
-            //位置推定
+            //位置推定(プロジェクタ画像更新なし)
             result = callfindProjectorPose_Corner(projectorestimation,
                 pixels_ptr_,
                 initial_R, initial_T, dst_R, dst_T,
