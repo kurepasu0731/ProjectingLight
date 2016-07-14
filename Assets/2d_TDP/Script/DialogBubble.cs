@@ -16,6 +16,7 @@ public class DialogBubble : MonoBehaviour {
 
     private float framecount = 0.0f;
     public int TimeSpan = 200;
+    public Vector3 RoundOffset = new Vector3(-0.15f, 0f, 0f);
 
 	//show the right bubble on the current character
 	void ShowBubble(DialogBubble vcharacter)
@@ -75,13 +76,13 @@ public class DialogBubble : MonoBehaviour {
 				if (vBubble.vMessageForm == BubbleType.Rectangle)
 				{
 					//create bubble
-					vBubbleObject = Instantiate(Resources.Load<GameObject> ("Customs/myBubbleRectangle"));
+					vBubbleObject = (GameObject)Instantiate(Resources.Load("Customs/myBubbleRectangle"), this.transform.position, this.transform.rotation);
 					//vBubbleObject.transform.position = vcharacter.transform.position + new Vector3(1.35f, 1.9f, 0f); //move a little bit the teleport particle effect
 				}
 				else 
 				{
 					//create bubble
-					vBubbleObject = Instantiate(Resources.Load<GameObject> ("Customs/myBubbleRound"));
+					vBubbleObject = (GameObject)Instantiate(Resources.Load("Customs/myBubbleRound"), this.transform.position + RoundOffset, this.transform.rotation);
 					//vBubbleObject.transform.position = vcharacter.transform.position + new Vector3(0.15f, 1.75f, 0f); //move a little bit the teleport particle effect
 				}
 
