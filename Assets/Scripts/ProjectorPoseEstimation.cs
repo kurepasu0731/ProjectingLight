@@ -204,7 +204,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
         //初期キャリブレーションファイル、3次元復元ファイル読み込み
         callloadParam(projectorestimation, initial_R, initial_T);
         //カメラ起動 各種設定
-        initWebCamera(camdevice, fps, cameraWidth, cameraHeight);
+       // initWebCamera(camdevice, fps, cameraWidth, cameraHeight);
     }
 
     //終了処理
