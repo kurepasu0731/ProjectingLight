@@ -115,7 +115,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     //private IntPtr proj_texturePixelsPtr_;
 
     //処理時間計測用
-    private float check_time;
+    //private float check_time;
 
 	// Use this for initialization
 	void Awake () {
@@ -141,21 +141,21 @@ public class ProjectorPoseEstimation : MonoBehaviour {
         if (isTrack == true)
         {
             //処理時間計測
-            check_time = Time.realtimeSinceStartup * 1000;
+            //check_time = Time.realtimeSinceStartup * 1000;
             //カメラの画像取ってくる
             getCameraTexture(camera_, pixels_ptr_);
-            check_time = Time.realtimeSinceStartup * 1000 - check_time;
-            Debug.Log("getCameraTexture :" + check_time + "ms");
+            //check_time = Time.realtimeSinceStartup * 1000 - check_time;
+            //Debug.Log("getCameraTexture :" + check_time + "ms");
 
             //処理時間計測
-            check_time = Time.realtimeSinceStartup * 1000;
+            //check_time = Time.realtimeSinceStartup * 1000;
             //位置推定(プロジェクタ画像更新なし)
             result = callfindProjectorPose_Corner(projectorestimation,
                 pixels_ptr_,
                 initial_R, initial_T, dst_R, dst_T,
                 camCornerNum, camMinDist, projCornerNum, projMinDist, thresh, mode);
-            check_time = Time.realtimeSinceStartup * 1000 - check_time;
-            Debug.Log("callfindProjectorPose_Corner :" + check_time + "ms");
+            //check_time = Time.realtimeSinceStartup * 1000 - check_time;
+            //Debug.Log("callfindProjectorPose_Corner :" + check_time + "ms");
 
             //位置推定(プロジェクタ画像更新入り)
             //result = callfindProjectorPose_Corner(projectorestimation,
@@ -165,12 +165,8 @@ public class ProjectorPoseEstimation : MonoBehaviour {
 
             if (result)
             {
-                //処理時間計測
-                check_time = Time.realtimeSinceStartup * 1000;
                 //プロジェクタの外部パラメータ更新
                 procamManager.UpdateProjectorExternalParam(dst_R, dst_T);
-                check_time = Time.realtimeSinceStartup * 1000 - check_time;
-                Debug.Log("UpdateProjectorExternalParam :" + check_time + "ms");
 
                 initial_R = dst_R;
                 initial_T = dst_T;
@@ -180,10 +176,10 @@ public class ProjectorPoseEstimation : MonoBehaviour {
         else if (camera_ != System.IntPtr.Zero && pixels_ptr_ != System.IntPtr.Zero)
         {
             //処理時間計測
-            check_time = Time.realtimeSinceStartup * 1000;
+            //check_time = Time.realtimeSinceStartup * 1000;
             getCameraTexture(camera_, pixels_ptr_);
-            check_time = Time.realtimeSinceStartup * 1000 - check_time;
-            Debug.Log("getCameraTexture :" + check_time + "ms");
+            //check_time = Time.realtimeSinceStartup * 1000 - check_time;
+            //Debug.Log("getCameraTexture :" + check_time + "ms");
 
         }
 
@@ -216,10 +212,6 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     {
         pixels_handle_.Free();
         releaseCamera(camera_);
-
-        //closeWindow("Camera detected corners");
-        //closeWindow("Projector detected corners");
-        //closeWindow("web camera");
 
         destroyAllWindows();
     }
