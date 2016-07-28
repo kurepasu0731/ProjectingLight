@@ -56,7 +56,7 @@ public class gui : MonoBehaviour {
             }
             else
             {
-                projectorposeestimationManager.thresh = 50;
+                projectorposeestimationManager.thresh = 150;
             }
             threshFlag = !threshFlag;
 

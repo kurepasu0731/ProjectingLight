@@ -809,8 +809,8 @@ Transform:
   m_PrefabParentObject: {fileID: 400002, guid: 0aa3957d6619ea1489b31b2b8a28816d, type: 3}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 890551263}
-  m_LocalRotation: {x: -0.5947309, y: -0.39782983, z: -0.41024628, w: 0.5654419}
-  m_LocalPosition: {x: -0.082523, y: -0.1269803, z: 0.5099899}
+  m_LocalRotation: {x: -0.5620289, y: -0.43621618, z: -0.42460096, w: 0.5599581}
+  m_LocalPosition: {x: -0.0798, y: -0.131, z: 0.549}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 129509143}
@@ -1460,13 +1460,13 @@ MonoBehaviour:
   camHeight: 1080
   proWidth: 1280
   proHeight: 800
-  camCornerNum: 200
-  camMinDist: 30
+  camCornerNum: 300
+  camMinDist: 50
   projCornerNum: 500
   projMinDist: 20
-  thresh: 50
+  thresh: 150
   mode: 1
-  backgroundImgFile: Assets/Image/fukidashi6.png
+  backgroundImgFile: Assets/Image/fukidashi9.png
   checkerRow: 10
   checkerCol: 17
   BlockSize: 64
@@ -1627,7 +1627,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Texture: {fileID: 8400000, guid: e08d5cdd6d97a754aa7d1474b9811e8c, type: 2}
+  m_Texture: {fileID: 2800000, guid: 831c6f8ec3d9674458408db894a0b2de, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -1693,7 +1693,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 831c6f8ec3d9674458408db894a0b2de, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 11528535f6047804db4329f9b18082b2, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
