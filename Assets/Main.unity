@@ -810,7 +810,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 890551263}
   m_LocalRotation: {x: -0.5620289, y: -0.43621618, z: -0.42460096, w: 0.5599581}
-  m_LocalPosition: {x: -0.0798, y: -0.131, z: 0.549}
+  m_LocalPosition: {x: -0.0824, y: -0.1316, z: 0.555}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 129509143}
@@ -1460,7 +1460,7 @@ MonoBehaviour:
   camHeight: 1080
   proWidth: 1280
   proHeight: 800
-  camCornerNum: 300
+  camCornerNum: 200
   camMinDist: 50
   projCornerNum: 500
   projMinDist: 20
