@@ -134,8 +134,8 @@ public class ProCamManager : MonoBehaviour {
 
         loadProjectorParam(proj_K, proj_dist);
 
-        double far = mainCamera.farClipPlane;
-        double near = mainCamera.nearClipPlane;
+        double far = mainProjector.farClipPlane;
+        double near = mainProjector.nearClipPlane;
 
         Matrix4x4 cameraMatrix = Matrix4x4.zero;
 
@@ -373,7 +373,7 @@ public class ProCamManager : MonoBehaviour {
         Vector3 TramslateVector = new Vector3(calibMatrix.m03, calibMatrix.m13, calibMatrix.m23);
         Vector3 camTvec = -(t_RotateMatrix * TramslateVector);
 
-        Debug.Log("(x, y, z): (" + camTvec.x + ", " + camTvec.y + ", " + camTvec.z + ")");
+        //Debug.Log("(x, y, z): (" + camTvec.x + ", " + camTvec.y + ", " + camTvec.z + ")");
 
         //transform projector
         //y軸逆にする
