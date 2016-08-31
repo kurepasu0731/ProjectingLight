@@ -2,7 +2,7 @@ Shader "Custom/PinHole" {
 	Properties {
 		_HoleSize("Hole Size", float) = 0.05
 		_BlurThick("Blur Thick", float) = 0.1
-		_HolePos("Hole vector", Vector) = (0.5, 0.5, 1.0, 1.0)
+		_HolePos("Hole vector", Vector) = (0.0, 0.0, 1.0, 1.0) //âÊñ íÜêSÇ™å¥ì_
 		_Color ("Color", Color) = (0.0,0.0,0.0,1.0)
 	}
 	
@@ -44,8 +44,9 @@ Shader "Custom/PinHole" {
 
 				// consider material resolution
 				pos.y -= 0.5;
-				pos.y *= (9.0 / 16.0);
-				pos.y += 0.5;
+				//pos.y *= (9.0 / 16.0);
+				//pos.y += 0.5;
+				pos.x -= 0.5;
 				
 				float dist = distance(pos, float2(_HolePos.x, _HolePos.y));
 				if(dist < _HoleSize) {
