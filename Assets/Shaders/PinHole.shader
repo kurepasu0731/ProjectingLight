@@ -1,5 +1,6 @@
 Shader "Custom/PinHole" {
 	Properties {
+		_MainTex ("Base (RGB)", 2D) = "" {}
 		_HoleSize("Hole Size", float) = 0.05
 		_BlurThick("Blur Thick", float) = 0.1
 		_HolePos("Hole vector", Vector) = (0.0, 0.0, 1.0, 1.0) //âÊñ íÜêSÇ™å¥ì_
@@ -29,6 +30,8 @@ Shader "Custom/PinHole" {
 				float2 uv : TEXCOORD0;
 			};
 			
+			sampler2D _MainTex;
+
 			v2f vert (appdata_base v)
 			{
 				v2f o;
@@ -41,6 +44,7 @@ Shader "Custom/PinHole" {
 			{
 				half4 col = _Color;
 				float2 pos = i.uv;
+				//half4 color = tex2D (_MainTex, pos);	 
 
 				// consider material resolution
 				pos.y -= 0.5;
@@ -51,11 +55,15 @@ Shader "Custom/PinHole" {
 				float dist = distance(pos, float2(_HolePos.x, _HolePos.y));
 				if(dist < _HoleSize) {
 					clip(-1.0);
+					//color.b = 0.0;
 				} else if(dist < _HoleSize + _BlurThick){
 					col.a = (dist - _HoleSize) * 10.0;
 					col.a = pow(col.a, 2.0);
+
+					//color.b = (dist - _HoleSize) * 10.0;
+					//color.b = pow(color.b, 2.0);
 				}
-				
+				//return color;
 				return col;
 			}	
 			ENDCG
