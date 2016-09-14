@@ -25,7 +25,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
                                                                                  IntPtr cam_data,
                                                                                  double[] initR, double[] initT,
                                                                                  double[] dstR, double[] dstT,
-                                                                                 int camCornerNum, double camMinDist, int projCornerNum, double projMinDist, double thresh, int mode);
+                                                                                 int camCornerNum, double camMinDist, int projCornerNum, double projMinDist, double thresh, int mode, bool isKalman);
     //プロジェクタ画像更新入り
     //[DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     //private static extern bool callfindProjectorPose_Corner(IntPtr projectorestimation,
@@ -95,6 +95,12 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     private bool result = false;
     //プロジェクタ位置推定を開始するかどうか
     public bool isTrack = false;
+    //カルマンフィルタ使うかどうか
+    public bool isKalman = true;
+
+    //記録するかどうか
+    public bool isRecord = false;
+    private System.IO.StreamWriter sw;
 
     //WebCamera関係
     private IntPtr camera_;
@@ -153,7 +159,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
             result = callfindProjectorPose_Corner(projectorestimation,
                 pixels_ptr_,
                 initial_R, initial_T, dst_R, dst_T,
-                camCornerNum, camMinDist, projCornerNum, projMinDist, thresh, mode);
+                camCornerNum, camMinDist, projCornerNum, projMinDist, thresh, mode, isKalman);
             //check_time = Time.realtimeSinceStartup * 1000 - check_time;
             //Debug.Log("callfindProjectorPose_Corner :" + check_time + "ms");
 
@@ -167,6 +173,9 @@ public class ProjectorPoseEstimation : MonoBehaviour {
             {
                 //プロジェクタの外部パラメータ更新
                 procamManager.UpdateProjectorExternalParam(dst_R, dst_T);
+
+                //csvに記録
+                if (isRecord) Record_T(dst_T);
 
                 initial_R = dst_R;
                 initial_T = dst_T;
@@ -186,6 +195,30 @@ public class ProjectorPoseEstimation : MonoBehaviour {
         //proj_texturePixelsHandle_.Free();
 
 	}
+
+    public void OpenStream(string filename)
+    {
+        sw = new System.IO.StreamWriter(@filename, false);
+    }
+
+    public void CloseStream()
+    {
+        if(sw != null) sw.Close();
+    }
+
+    //csvにdstTを記録
+    public void Record_T(double[] dstT)
+    {
+        try
+        {
+            if(sw != null)
+                sw.WriteLine("{0}, {1}, {2},", dst_T[0], dst_T[1], dst_T[2]);
+        }
+        catch (System.Exception e)
+        {
+            Debug.Log(e.Message);
+        }
+    }
 
     public void initWebCamera(int camdevice, int fps, int cameraWidth, int cameraHeight)
     {

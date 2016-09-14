@@ -61,6 +61,19 @@ public class gui : MonoBehaviour {
             threshFlag = !threshFlag;
 
         }
+        if (GUI.Button(new Rect(470, 70, 150, 20), "推定値記録 start/stop"))
+        {
+            projectorposeestimationManager.isRecord = !projectorposeestimationManager.isRecord;
+            string filename = projectorposeestimationManager.isKalman ? "dstT_Kalman.csv" : "dstT.csv";
+            if (projectorposeestimationManager.isRecord)
+            {
+                projectorposeestimationManager.OpenStream(filename);
+            }
+            else
+            {
+                projectorposeestimationManager.CloseStream();
+            }
+        }
 
 
         GUI.TextField(new Rect(170, 110, 100, 20), "Camera width");
