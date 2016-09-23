@@ -47,6 +47,19 @@ public class gui : MonoBehaviour {
         {
             projectorposeestimationManager.createCameraMaskImage();
             projectorposeestimationManager.isTrack = !projectorposeestimationManager.isTrack;
+
+            ////録画したのを再生しながら記録したいとき
+            //projectorposeestimationManager.isRecord = !projectorposeestimationManager.isRecord;
+            //string filename = projectorposeestimationManager.isKalman ? "dstT_Kalman.csv" : "dstT.csv";
+            //if (projectorposeestimationManager.isRecord)
+            //{
+            //    projectorposeestimationManager.OpenStream(filename);
+            //}
+            //else
+            //{
+            //    projectorposeestimationManager.CloseStream();
+            //}
+
         }
         if (GUI.Button(new Rect(320, 70, 150, 20), "thresh 切り替え"))
         {
@@ -61,8 +74,9 @@ public class gui : MonoBehaviour {
             threshFlag = !threshFlag;
 
         }
-        if (GUI.Button(new Rect(470, 70, 150, 20), "推定値記録 start/stop"))
+        if (GUI.Button(new Rect(470, 70, 150, 20), "推定値記録・録画 start/stop"))
         {
+            projectorposeestimationManager.isCameraRecord = !projectorposeestimationManager.isCameraRecord;
             projectorposeestimationManager.isRecord = !projectorposeestimationManager.isRecord;
             string filename = projectorposeestimationManager.isKalman ? "dstT_Kalman.csv" : "dstT.csv";
             if (projectorposeestimationManager.isRecord)
@@ -75,7 +89,6 @@ public class gui : MonoBehaviour {
             }
         }
 
-
         GUI.TextField(new Rect(170, 110, 100, 20), "Camera width");
         camWidth = GUI.TextField(new Rect(270, 110, 50, 20), camWidth);
         GUI.TextField(new Rect(170, 130, 100, 20), "Camera height");
@@ -87,9 +100,5 @@ public class gui : MonoBehaviour {
         proHeight = GUI.TextField(new Rect(120, 130, 50, 20), proHeight);
         GUI.TextField(new Rect(20, 150, 100, 20), "Projector Num");
         num = GUI.TextField(new Rect(120, 150, 50, 20), num);
-
-        //投影背景
-        //GUI.DrawTexture(new Rect(0, 0, float.Parse(camWidth), float.Parse(camHeight)), BackGround, ScaleMode.ScaleToFit);
-
     }
 }
