@@ -1,8 +1,8 @@
 Shader "Custom/PinHole" {
 	Properties {
 		_MainTex ("Base (RGB)", 2D) = "" {}
-		_HoleSize("Hole Size", float) = 0.03
-		_BlurThick("Blur Thick", float) = 0.005
+		_HoleSize("Hole Size", float) = 0.05
+		_BlurThick("Blur Thick", float) = 0.05
 		_HolePos("Hole vector", Vector) = (0.0, 0.0, 1.0, 1.0) //画面中心が原点
 		_Color ("Color", Color) = (0.0,0.0,0.0,1.0)
 	}
@@ -65,7 +65,7 @@ Shader "Custom/PinHole" {
 
 					if(color.r != 1.0 && color.g != 1.0 && color.b != 1.0)//ドラえもんだけしか黄色くならないようにする
 					{
-						color.b = (dist - _HoleSize) * 10.0;
+						color.b = (dist - _HoleSize) * 20.0;
 						color.b = pow(color.b, 2.0);
 					}
 				}
