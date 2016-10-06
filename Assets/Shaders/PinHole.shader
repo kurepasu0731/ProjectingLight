@@ -1,8 +1,8 @@
 Shader "Custom/PinHole" {
 	Properties {
 		_MainTex ("Base (RGB)", 2D) = "" {}
-		_HoleSize("Hole Size", float) = 0.05
-		_BlurThick("Blur Thick", float) = 0.1
+		_HoleSize("Hole Size", float) = 0.03
+		_BlurThick("Blur Thick", float) = 0.005
 		_HolePos("Hole vector", Vector) = (0.0, 0.0, 1.0, 1.0) //画面中心が原点
 		_Color ("Color", Color) = (0.0,0.0,0.0,1.0)
 	}
@@ -44,27 +44,33 @@ Shader "Custom/PinHole" {
 			{
 				half4 col = _Color;
 				float2 pos = i.uv;
-				//half4 color = tex2D (_MainTex, pos);	 
+				half4 color = tex2D (_MainTex, pos);	 
 
 				// consider material resolution
 				pos.y -= 0.5;
-				//pos.y *= (9.0 / 16.0);
+				pos.y *= (10.0 / 16.0);
 				//pos.y += 0.5;
 				pos.x -= 0.5;
 				
 				float dist = distance(pos, float2(_HolePos.x, _HolePos.y));
 				if(dist < _HoleSize) {
-					clip(-1.0);
-					//color.b = 0.0;
+					//clip(-1.0);
+					if(color.r != 1.0 && color.g != 1.0 && color.b != 1.0)
+					{
+						color.b = 0.0;
+					}
 				} else if(dist < _HoleSize + _BlurThick){
-					col.a = (dist - _HoleSize) * 10.0;
-					col.a = pow(col.a, 2.0);
+					//col.a = (dist - _HoleSize) * 10.0;
+					//col.a = pow(col.a, 2.0);
 
-					//color.b = (dist - _HoleSize) * 10.0;
-					//color.b = pow(color.b, 2.0);
+					if(color.r != 1.0 && color.g != 1.0 && color.b != 1.0)//ドラえもんだけしか黄色くならないようにする
+					{
+						color.b = (dist - _HoleSize) * 10.0;
+						color.b = pow(color.b, 2.0);
+					}
 				}
-				//return color;
-				return col;
+				return color;
+				//return col;
 			}	
 			ENDCG
 		}
