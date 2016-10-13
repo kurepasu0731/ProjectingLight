@@ -15,7 +15,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     [DllImport("WebCamera_DLL", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern void releaseCamera(IntPtr camera);
     [DllImport("WebCamera_DLL", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-    private static extern void getCameraTexture(IntPtr camera, IntPtr data, bool isCameraRecord);
+    private static extern void getCameraTexture(IntPtr camera, IntPtr data, bool isCameraRecord, bool isShowWin);
 
     [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern IntPtr openProjectorEstimation(int camWidth, int camHeight, int proWidth, int proHeight, string backgroundImgFile,
@@ -133,7 +133,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     //private IntPtr proj_texturePixelsPtr_;
 
     //処理時間計測用
-    //private float check_time;
+    private float check_time;
 
 	// Use this for initialization
 	void Awake () {
@@ -188,14 +188,14 @@ public class ProjectorPoseEstimation : MonoBehaviour {
                 }
             }
             //★処理時間計測
-            //check_time = Time.realtimeSinceStartup * 1000;
+            check_time = Time.realtimeSinceStartup * 1000;
             //カメラの画像取ってくる
-            getCameraTexture(camera_, pixels_ptr_, isCameraRecord);
-            //check_time = Time.realtimeSinceStartup * 1000 - check_time;
-            //Debug.Log("getCameraTexture :" + check_time + "ms");
+            getCameraTexture(camera_, pixels_ptr_, isCameraRecord, false);
+            check_time = Time.realtimeSinceStartup * 1000 - check_time;
+            Debug.Log("getCameraTexture :" + check_time + "ms");
 
             //★処理時間計測
-            //check_time = Time.realtimeSinceStartup * 1000;
+            check_time = Time.realtimeSinceStartup * 1000;
 
             if (pixels_ptr_ != System.IntPtr.Zero)
             {//位置推定(プロジェクタ画像更新なし)
@@ -204,8 +204,8 @@ public class ProjectorPoseEstimation : MonoBehaviour {
                     initial_R, initial_T, dst_R, dst_T,
                     camCornerNum, camMinDist, projCornerNum, projMinDist, thresh, mode, isKalman);
             }
-            //check_time = Time.realtimeSinceStartup * 1000 - check_time;
-            //Debug.Log("callfindProjectorPose_Corner :" + check_time + "ms");
+            check_time = Time.realtimeSinceStartup * 1000 - check_time;
+            Debug.Log("all callfindProjectorPose_Corner :" + check_time + "ms");
 
             //位置推定(プロジェクタ画像更新入り)
             //result = callfindProjectorPose_Corner(projectorestimation,
@@ -231,7 +231,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
             //★処理時間計測
             //check_time = Time.realtimeSinceStartup * 1000;
             //録画したのを再生するときはコメントアウトする↓
-            getCameraTexture(camera_, pixels_ptr_, isCameraRecord);
+            getCameraTexture(camera_, pixels_ptr_, isCameraRecord, true);
             //check_time = Time.realtimeSinceStartup * 1000 - check_time;
             //Debug.Log("getCameraTexture :" + check_time + "ms");
 
