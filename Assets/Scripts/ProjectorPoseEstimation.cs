@@ -28,7 +28,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
                                                                                  IntPtr cam_data,
                                                                                  double[] initR, double[] initT,
                                                                                  double[] dstR, double[] dstT,
-                                                                                 int camCornerNum, double camMinDist, int projCornerNum, double projMinDist, double thresh, int mode, bool isKalman);
+                                                                                 int camCornerNum, double camMinDist, int projCornerNum, double projMinDist, double thresh, int mode, bool isKalman, double C, int dotsMin, int dotsMax);
     //プロジェクタ画像更新入り
     //[DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     //private static extern bool callfindProjectorPose_Corner(IntPtr projectorestimation,
@@ -72,6 +72,12 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     public int projMinDist = 10;
     public double thresh = 50;
     public int mode = 2;
+
+    //ドット検出用パラメータ
+    public double C = -5;
+    public int DOT_THRESH_VAL_MIN = 100; //ドットノイズ弾き
+    public int DOT_THRESH_VAL_MAX = 500; //エッジノイズ弾き
+
 
     //背景画像ファイル
     public string backgroundImgFile = "Assets/Image/bedsidemusic_1280_800.jpg";// Assets/Image/○○
@@ -188,24 +194,24 @@ public class ProjectorPoseEstimation : MonoBehaviour {
                 }
             }
             //★処理時間計測
-            check_time = Time.realtimeSinceStartup * 1000;
+            //check_time = Time.realtimeSinceStartup * 1000;
             //カメラの画像取ってくる
             getCameraTexture(camera_, pixels_ptr_, isCameraRecord, false);
-            check_time = Time.realtimeSinceStartup * 1000 - check_time;
-            Debug.Log("getCameraTexture :" + check_time + "ms");
+            //check_time = Time.realtimeSinceStartup * 1000 - check_time;
+            //Debug.Log("getCameraTexture :" + check_time + "ms");
 
             //★処理時間計測
-            check_time = Time.realtimeSinceStartup * 1000;
+            //check_time = Time.realtimeSinceStartup * 1000;
 
             if (pixels_ptr_ != System.IntPtr.Zero)
             {//位置推定(プロジェクタ画像更新なし)
                 result = callfindProjectorPose_Corner(projectorestimation,
                     pixels_ptr_,
                     initial_R, initial_T, dst_R, dst_T,
-                    camCornerNum, camMinDist, projCornerNum, projMinDist, thresh, mode, isKalman);
+                    camCornerNum, camMinDist, projCornerNum, projMinDist, thresh, mode, isKalman, C, DOT_THRESH_VAL_MIN, DOT_THRESH_VAL_MAX);
             }
-            check_time = Time.realtimeSinceStartup * 1000 - check_time;
-            Debug.Log("all callfindProjectorPose_Corner :" + check_time + "ms");
+            //check_time = Time.realtimeSinceStartup * 1000 - check_time;
+            //Debug.Log("all callfindProjectorPose_Corner :" + check_time + "ms");
 
             //位置推定(プロジェクタ画像更新入り)
             //result = callfindProjectorPose_Corner(projectorestimation,
