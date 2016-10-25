@@ -27,7 +27,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     private static extern bool callfindProjectorPose_Corner(IntPtr projectorestimation,
                                                                                  IntPtr cam_data,
                                                                                  double[] initR, double[] initT,
-                                                                                 double[] dstR, double[] dstT,
+                                                                                 double[] dstR, double[] dstT, double[] error,
                                                                                  int camCornerNum, double camMinDist, int projCornerNum, double projMinDist, double thresh, int mode, bool isKalman, double C, int dotsMin, int dotsMax);
     //プロジェクタ画像更新入り
     //[DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
@@ -65,6 +65,9 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     public int proWidth = 1280;
     public int proHeight = 800;
 
+    //カメラデバイス番号(-1なら再生モード)
+    public int camdevice = 0;
+
     //コーナー検出で用いるパラメータ
     public int camCornerNum = 500;
     public int camMinDist = 5;
@@ -99,6 +102,8 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     //現フレームでの推定結果
     private double[] dst_R = new double[9];
     private double[] dst_T = new double[3];
+    //1フレームでの対応点の再投影誤差
+    private double[] error = new double[1];
 
     //推定できたかどうか
     private bool result = false;
@@ -108,16 +113,23 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     public bool isKalman = true;
 
     //csv記録するかどうか
+    [HideInInspector]
     public bool isRecord = false;
     private System.IO.StreamWriter sw;
 
     //録画するか
+    [HideInInspector]
     public bool isCameraRecord = false;
 
-    //録画した時のプロジェクタの初期値(recordedInitialValue.txtからコピペする)
-    private bool isfirst = true; //最初のフレームだけ
-    private double[] recordedInitialR = { 0.659133818639633,-0.0200499252027763,-0.751758345231297,-0.00118308540885864,0.999615643030721,-0.0276977709787877,0.752024739908502,0.0191459318822852,0.658856755188795 };
-    private double[] recordedInitialT = { 503.653325643345, -265.302786440286, 519.213222703862 };
+    //フラグのフラグ(トラッキングボタン押す前に設定する)
+    public bool CSVREC = false; //トラッキングしてるときにcsvに記録するかどうか
+    public bool VIDEOREC = false;//トラッキングしてるときに録画するかどうか
+
+
+    ////録画した時のプロジェクタの初期値(recordedInitialValue.txtからコピペする)
+    //private bool isfirst = true; //最初のフレームだけ
+    //private double[] recordedInitialR = { 0.659133818639633,-0.0200499252027763,-0.751758345231297,-0.00118308540885864,0.999615643030721,-0.0276977709787877,0.752024739908502,0.0191459318822852,0.658856755188795 };
+    //private double[] recordedInitialT = { 503.653325643345, -265.302786440286, 519.213222703862 };
 
 
     //WebCamera関係
@@ -166,6 +178,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
 
         if (isTrack == true)
         {
+/*
             //録画時
             //録画開始時の初期値を記録しておく
             //if (isCameraRecord)
@@ -193,6 +206,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
                     isfirst = false;
                 }
             }
+*/
             //★処理時間計測
             //check_time = Time.realtimeSinceStartup * 1000;
             //カメラの画像取ってくる
@@ -207,7 +221,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
             {//位置推定(プロジェクタ画像更新なし)
                 result = callfindProjectorPose_Corner(projectorestimation,
                     pixels_ptr_,
-                    initial_R, initial_T, dst_R, dst_T,
+                    initial_R, initial_T, dst_R, dst_T, error,
                     camCornerNum, camMinDist, projCornerNum, projMinDist, thresh, mode, isKalman, C, DOT_THRESH_VAL_MIN, DOT_THRESH_VAL_MAX);
             }
             //check_time = Time.realtimeSinceStartup * 1000 - check_time;
@@ -225,14 +239,14 @@ public class ProjectorPoseEstimation : MonoBehaviour {
                 procamManager.UpdateProjectorExternalParam(dst_R, dst_T);
 
                 //csvに記録
-                if (isRecord) Record_T(dst_T);
+                if (isRecord) Record_T(dst_T, error[0]);
 
                 initial_R = dst_R;
                 initial_T = dst_T;
             }
         }
         //WebCameraの初期化が終わっていたら、画像表示開始
-        else if (camera_ != System.IntPtr.Zero && pixels_ptr_ != System.IntPtr.Zero)
+        else if (camera_ != System.IntPtr.Zero && pixels_ptr_ != System.IntPtr.Zero && camdevice != -1)
         {
             //★処理時間計測
             //check_time = Time.realtimeSinceStartup * 1000;
@@ -258,12 +272,12 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     }
 
     //csvにdstTを記録
-    public void Record_T(double[] dstT)
+    public void Record_T(double[] dstT, double error)
     {
         try
         {
             if(sw != null)
-                sw.WriteLine("{0}, {1}, {2},", dst_T[0], dst_T[1], dst_T[2]);
+                sw.WriteLine("{0}, {1}, {2}, {3}", dst_T[0], dst_T[1], dst_T[2], error);
         }
         catch (System.Exception e)
         {
@@ -271,7 +285,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
         }
     }
 
-    public void initWebCamera(int camdevice, int fps, int cameraWidth, int cameraHeight)
+    public void initWebCamera(int fps, int cameraWidth, int cameraHeight)
     {
         camera_ = getCamera(camdevice);
         setCameraProp(camera_,cameraWidth, cameraHeight, fps);
@@ -283,12 +297,12 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     }
 
     //パラメータ読み込み、カメラ起動などの初期化処理
-    public void init(int camdevice, int fps, int cameraWidth, int cameraHeight)
+    public void init(int fps, int cameraWidth, int cameraHeight)
     {
         //初期キャリブレーションファイル、3次元復元ファイル読み込み
         callloadParam(projectorestimation, initial_R, initial_T);
         //カメラ起動 各種設定
-        initWebCamera(camdevice, fps, cameraWidth, cameraHeight);
+        initWebCamera(fps, cameraWidth, cameraHeight);
     }
 
     //終了処理

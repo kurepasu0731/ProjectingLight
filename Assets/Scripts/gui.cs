@@ -32,7 +32,7 @@ public class gui : MonoBehaviour {
         if (GUI.Button(new Rect(20, 50, 150, 20), "パラメータ読み込み"))
         {
             procamManager.loadParam(int.Parse(camWidth), int.Parse(camHeight), int.Parse(proWidth), int.Parse(proHeight));
-            projectorposeestimationManager.init(0, 30, int.Parse(camWidth), int.Parse(camHeight));
+            projectorposeestimationManager.init(30, int.Parse(camWidth), int.Parse(camHeight));
             projectorposeestimationManager.createCameraMaskImage();
         }
         if (GUI.Button(new Rect(20, 70, 150, 20), "投影"))
@@ -48,17 +48,25 @@ public class gui : MonoBehaviour {
             projectorposeestimationManager.createCameraMaskImage();
             projectorposeestimationManager.isTrack = !projectorposeestimationManager.isTrack;
 
-            ////録画したのを再生しながら記録したいとき
-            //projectorposeestimationManager.isRecord = !projectorposeestimationManager.isRecord;
-            //string filename = projectorposeestimationManager.isKalman ? "dstT_Kalman.csv" : "dstT.csv";
-            //if (projectorposeestimationManager.isRecord)
-            //{
-            //    projectorposeestimationManager.OpenStream(filename);
-            //}
-            //else
-            //{
-            //    projectorposeestimationManager.CloseStream();
-            //}
+            if (projectorposeestimationManager.CSVREC)
+            {
+                //録画したのを再生しながら記録したいとき
+                projectorposeestimationManager.isRecord = !projectorposeestimationManager.isRecord;
+                string filename = projectorposeestimationManager.isKalman ? "dstT_Kalman.csv" : "dstT.csv";
+                if (projectorposeestimationManager.isRecord)
+                {
+                    projectorposeestimationManager.OpenStream(filename);
+                }
+                else
+                {
+                    projectorposeestimationManager.CloseStream();
+                }
+            }
+
+            if (projectorposeestimationManager.VIDEOREC)
+            {
+                projectorposeestimationManager.isCameraRecord = !projectorposeestimationManager.isCameraRecord;
+            }
 
         }
         if (GUI.Button(new Rect(320, 70, 150, 20), "thresh 切り替え"))
@@ -74,7 +82,8 @@ public class gui : MonoBehaviour {
             threshFlag = !threshFlag;
 
         }
-        if (GUI.Button(new Rect(470, 70, 150, 20), "推定値記録・録画 start/stop"))
+/*
+        if (GUI.Button(new Rect(470, 70, 150, 20), "推定値記録 start/stop"))
         {
             projectorposeestimationManager.isCameraRecord = !projectorposeestimationManager.isCameraRecord;
             projectorposeestimationManager.isRecord = !projectorposeestimationManager.isRecord;
@@ -88,7 +97,7 @@ public class gui : MonoBehaviour {
                 projectorposeestimationManager.CloseStream();
             }
         }
-
+*/
         GUI.TextField(new Rect(170, 110, 100, 20), "Camera width");
         camWidth = GUI.TextField(new Rect(270, 110, 50, 20), camWidth);
         GUI.TextField(new Rect(170, 130, 100, 20), "Camera height");

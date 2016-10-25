@@ -1959,6 +1959,7 @@ MonoBehaviour:
   camHeight: 1080
   proWidth: 1280
   proHeight: 800
+  camdevice: 0
   camCornerNum: 200
   camMinDist: 50
   projCornerNum: 500
@@ -1975,9 +1976,11 @@ MonoBehaviour:
   X_offset: 128
   Y_offset: 112
   isTrack: 0
-  isKalman: 0
+  isKalman: 1
   isRecord: 0
   isCameraRecord: 0
+  CSVREC: 1
+  VIDEOREC: 0
 --- !u!4 &1514692223
 Transform:
   m_ObjectHideFlags: 0
