@@ -1979,7 +1979,7 @@ MonoBehaviour:
   isKalman: 1
   isRecord: 0
   isCameraRecord: 0
-  CSVREC: 1
+  CSVREC: 0
   VIDEOREC: 0
 --- !u!4 &1514692223
 Transform:
