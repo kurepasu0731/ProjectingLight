@@ -63,7 +63,7 @@ public class gui : MonoBehaviour {
                 }
             }
 
-            if (projectorposeestimationManager.VIDEOREC)
+            if (projectorposeestimationManager.VIDEOREC && projectorposeestimationManager.camdevice != -1)
             {
                 projectorposeestimationManager.isCameraRecord = !projectorposeestimationManager.isCameraRecord;
             }

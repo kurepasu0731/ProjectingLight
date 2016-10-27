@@ -11,9 +11,9 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     [DllImport("WebCamera_DLL", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern IntPtr getCamera(int device_);
     [DllImport("WebCamera_DLL", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-    private static extern void setCameraProp(IntPtr camera, int width, int height, int fps);
+    private static extern void setCameraProp(IntPtr camera, int device, int width, int height, int fps);
     [DllImport("WebCamera_DLL", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-    private static extern void releaseCamera(IntPtr camera);
+    private static extern void releaseCamera(IntPtr camera, int device);
     [DllImport("WebCamera_DLL", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern void getCameraTexture(IntPtr camera, IntPtr data, bool isCameraRecord, bool isShowWin);
 
@@ -288,7 +288,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     public void initWebCamera(int fps, int cameraWidth, int cameraHeight)
     {
         camera_ = getCamera(camdevice);
-        setCameraProp(camera_,cameraWidth, cameraHeight, fps);
+        setCameraProp(camera_, camdevice, cameraWidth, cameraHeight, fps);
         texture_ = new Texture2D(cameraWidth, cameraHeight, TextureFormat.ARGB32, false);
         pixels_ = texture_.GetPixels32();
         pixels_handle_ = GCHandle.Alloc(pixels_, GCHandleType.Pinned);
@@ -309,7 +309,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     void OnApplicationQuit()
     {
         pixels_handle_.Free();
-        releaseCamera(camera_);
+        releaseCamera(camera_, camdevice);
 
         destroyAllWindows();
     }
