@@ -46,6 +46,7 @@ public class gui : MonoBehaviour {
         if (GUI.Button(new Rect(170, 70, 150, 20), "tracking start/stop"))
         {
             projectorposeestimationManager.createCameraMaskImage();
+            TargetObj.GetComponent<WireFrame>().setWireFrame(); //トラッキング開始後にぶたのshaderのrender modeをFadeにする！
             projectorposeestimationManager.isTrack = !projectorposeestimationManager.isTrack;
 
             if (projectorposeestimationManager.CSVREC)

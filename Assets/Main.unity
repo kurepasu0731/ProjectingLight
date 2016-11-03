@@ -1255,7 +1255,7 @@ MonoBehaviour:
   window: {fileID: 601778529}
   procamManager: {fileID: 1438457454}
   projectorposeestimationManager: {fileID: 1514692222}
-  TargetObj: {fileID: 0}
+  TargetObj: {fileID: 2059556654}
 --- !u!4 &1633431690
 Transform:
   m_ObjectHideFlags: 0
