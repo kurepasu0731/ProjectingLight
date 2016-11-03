@@ -11,7 +11,7 @@ public class gui : MonoBehaviour {
     private string proWidth = "1280";
     private string proHeight = "800";
     private string camWidth = "1920";
-    private string camHeight = "1080";
+    private string camHeight = "1200"; //WEBCAMERAは1080
     private string num = "0";
 
     private bool threshFlag = true;

@@ -8,6 +8,7 @@ using System.IO;
 
 public class ProjectorPoseEstimation : MonoBehaviour {
 
+    //**WEBCAMERA**//
     [DllImport("WebCamera_DLL", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern IntPtr getCamera(int device_);
     [DllImport("WebCamera_DLL", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
@@ -16,6 +17,19 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     private static extern void releaseCamera(IntPtr camera, int device);
     [DllImport("WebCamera_DLL", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern void getCameraTexture(IntPtr camera, IntPtr data, bool isCameraRecord, bool isShowWin);
+
+    //**PGRCAMERA**//
+    [DllImport("PGR_DLL", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    private static extern IntPtr getPGR(int device_);
+    [DllImport("PGR_DLL", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    private static extern void initPGR(IntPtr camera, int device);
+    [DllImport("PGR_DLL", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    private static extern void releasePGR(IntPtr camera, int device);
+    [DllImport("PGR_DLL", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    private static extern void getPGRTexture(IntPtr camera, int device, IntPtr data, bool isCameraRecord, bool isShowWin);
+    [DllImport("PGR_DLL", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    private static extern void showPixelData(IntPtr data);
+
 
     [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern IntPtr openProjectorEstimation(int camWidth, int camHeight, int proWidth, int proHeight, string backgroundImgFile,
@@ -29,13 +43,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
                                                                                  double[] initR, double[] initT,
                                                                                  double[] dstR, double[] dstT, double[] error,
                                                                                  int camCornerNum, double camMinDist, int projCornerNum, double projMinDist, double thresh, int mode, bool isKalman, double C, int dotsMin, int dotsMax);
-    //プロジェクタ画像更新入り
-    //[DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-    //private static extern bool callfindProjectorPose_Corner(IntPtr projectorestimation,
-    //                                                                             IntPtr cam_data, IntPtr prj_data,
-    //                                                                             double[] initR, double[] initT,
-    //                                                                             double[] dstR, double[] dstT,
-    //                                                                             int camCornerNum, double camMinDist, int projCornerNum, double projMinDist, double thresh, int mode);
+
     [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern void destroyAllWindows();
     [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
@@ -44,7 +52,6 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     public delegate void DebugLogDelegate(string str);
     DebugLogDelegate debugLogFunc = msg => Debug.Log(msg);
 
-    //[DllImport("ProjectorPoseEstimation_DLL2")]
     [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     public static extern void set_debug_log_func(DebugLogDelegate func);
 
@@ -61,7 +68,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
 
     //カメラ・プロジェクタの解像度
     public int camWidth = 1920;
-    public int camHeight = 1080;
+    public int camHeight = 1200; // WEBCAMERAは1080
     public int proWidth = 1280;
     public int proHeight = 800;
 
@@ -83,7 +90,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
 
 
     //背景画像ファイル
-    public string backgroundImgFile = "Assets/Image/bedsidemusic_1280_800.jpg";// Assets/Image/○○
+    public string backgroundImgFile;// Assets/Image/○○
 
     //チェッカパターン情報
     public int checkerRow = 10;
@@ -157,24 +164,11 @@ public class ProjectorPoseEstimation : MonoBehaviour {
 	void Awake () {
         projectorestimation = openProjectorEstimation(camWidth, camHeight, proWidth, proHeight, backgroundImgFile, checkerRow, checkerCol, BlockSize, X_offset, Y_offset);
         mask_texture = new Texture2D(cameraMask.width, cameraMask.height, TextureFormat.ARGB32, false);
-        ////プロジェクタ画像更新入りの場合、必要
-        //proj_texture = new Texture2D(projectorImage.width, projectorImage.height, TextureFormat.ARGB32, false);
     }
 
 
     // Update is called once per frame
 	void Update () {
-
-        ////プロジェクタ画像更新入りの場合、必要
-        ////プロジェクタのRenderTexture をTexture2Dに変換
-        //RenderTexture.active = projectorImage;
-        //proj_texture.ReadPixels(new Rect(0.0f, 0.0f, projectorImage.width, projectorImage.height), 0, 0);
-        //proj_texture.Apply();
-        ////ポインタに変換
-        //proj_texturePixels_ = proj_texture.GetPixels32();
-        //proj_texturePixelsHandle_ = GCHandle.Alloc(proj_texturePixels_, GCHandleType.Pinned);
-        //proj_texturePixelsPtr_ = proj_texturePixelsHandle_.AddrOfPinnedObject();
-
 
         if (isTrack == true)
         {
@@ -210,7 +204,11 @@ public class ProjectorPoseEstimation : MonoBehaviour {
             //★処理時間計測
             //check_time = Time.realtimeSinceStartup * 1000;
             //カメラの画像取ってくる
-            getCameraTexture(camera_, pixels_ptr_, isCameraRecord, false);
+            //**WEBCAMERA**//
+            //getCameraTexture(camera_, pixels_ptr_, isCameraRecord, false);
+            //**PGRCAMERA**//
+            getPGRTexture(camera_, camdevice, pixels_ptr_, isCameraRecord, false);
+
             //check_time = Time.realtimeSinceStartup * 1000 - check_time;
             //Debug.Log("getCameraTexture :" + check_time + "ms");
 
@@ -226,12 +224,6 @@ public class ProjectorPoseEstimation : MonoBehaviour {
             }
             //check_time = Time.realtimeSinceStartup * 1000 - check_time;
             //Debug.Log("all callfindProjectorPose_Corner :" + check_time + "ms");
-
-            //位置推定(プロジェクタ画像更新入り)
-            //result = callfindProjectorPose_Corner(projectorestimation,
-            //    pixels_ptr_, proj_texturePixelsPtr_,  
-            //    initial_R, initial_T, dst_R, dst_T,
-            //    camCornerNum, camMinDist, projCornerNum, projMinDist, thresh, mode);
 
             if (result)
             {
@@ -250,15 +242,16 @@ public class ProjectorPoseEstimation : MonoBehaviour {
         {
             //★処理時間計測
             //check_time = Time.realtimeSinceStartup * 1000;
-            //録画したのを再生するときはコメントアウトする↓
-            getCameraTexture(camera_, pixels_ptr_, isCameraRecord, true);
+            //**WEBCAMERA**//
+            //getCameraTexture(camera_, pixels_ptr_, isCameraRecord, true);
+            //**PGRCAMERA**//
+            getPGRTexture(camera_, camdevice, pixels_ptr_, isCameraRecord, true);
+            //showPixelData(pixels_ptr_);
+
             //check_time = Time.realtimeSinceStartup * 1000 - check_time;
             //Debug.Log("getCameraTexture :" + check_time + "ms");
 
         }
-
-        //proj_texturePixelsHandle_.Free();
-
 	}
 
     public void OpenStream(string filename)
@@ -296,20 +289,40 @@ public class ProjectorPoseEstimation : MonoBehaviour {
 
     }
 
+    public void initPGR(int cameraWidth, int cameraHeight)
+    {
+        camera_ = getPGR(camdevice);
+        initPGR(camera_, camdevice);
+        texture_ = new Texture2D(cameraWidth, cameraHeight, TextureFormat.ARGB32, false);
+        pixels_ = texture_.GetPixels32();
+        pixels_handle_ = GCHandle.Alloc(pixels_, GCHandleType.Pinned);
+        pixels_ptr_ = pixels_handle_.AddrOfPinnedObject();
+    }
+
+
     //パラメータ読み込み、カメラ起動などの初期化処理
     public void init(int fps, int cameraWidth, int cameraHeight)
     {
         //初期キャリブレーションファイル、3次元復元ファイル読み込み
         callloadParam(projectorestimation, initial_R, initial_T);
         //カメラ起動 各種設定
-        initWebCamera(fps, cameraWidth, cameraHeight);
+        //**WEBCAMERA**//
+        //initWebCamera(fps, cameraWidth, cameraHeight);
+        //**PGRCAMERA**//
+        initPGR(cameraWidth, cameraHeight);
     }
 
     //終了処理
     void OnApplicationQuit()
     {
         pixels_handle_.Free();
-        releaseCamera(camera_, camdevice);
+        //**WEBCAMERA**//
+        //releaseCamera(camera_, camdevice);
+        //**PGRCAMERA**//
+        if (camera_ != System.IntPtr.Zero)
+        {
+            releasePGR(camera_, camdevice);
+        }
 
         destroyAllWindows();
     }
