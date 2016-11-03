@@ -150,12 +150,12 @@ Material:
         second: 0
       data:
         first:
-          name: _Outline
-        second: 0.005
-      data:
-        first:
           name: _LineWidth
         second: 0.01
+      data:
+        first:
+          name: _Outline
+        second: 0.005
     m_Colors:
       data:
         first:
@@ -171,13 +171,13 @@ Material:
         second: {r: 0.2, g: 0.2, b: 0.2, a: 1}
       data:
         first:
-          name: _OutlineColor
-        second: {r: 0, g: 0, b: 0, a: 1}
-      data:
-        first:
           name: _LineColor
         second: {r: 1, g: 1, b: 1, a: 1}
       data:
         first:
           name: _GridColor
         second: {r: 1, g: 1, b: 1, a: 0}
+      data:
+        first:
+          name: _OutlineColor
+        second: {r: 0, g: 0, b: 0, a: 1}
