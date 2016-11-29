@@ -13,7 +13,7 @@ public class WireFrame : MonoBehaviour
     {
         MeshFilter mf = GetComponent<MeshFilter>();
         mf.mesh.SetIndices(mf.mesh.GetIndices(0), MeshTopology.Lines, 0);
-
+        //マスク画像つくってから透明にする
         BlendModeUtils.SetBlendMode(this.GetComponent<Renderer>().material, BlendModeUtils.Mode.Fade);
     }
 }

@@ -42,7 +42,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
                                                                                  IntPtr cam_data,
                                                                                  double[] initR, double[] initT,
                                                                                  double[] dstR, double[] dstT, double[] error,
-                                                                                 int camCornerNum, double camMinDist, int projCornerNum, double projMinDist, double thresh, int mode, bool isKalman, double C, int dotsMin, int dotsMax);
+                                                                                 int camCornerNum, double camMinDist, int projCornerNum, double projMinDist, double thresh, int mode, bool isKalman, double C, int dotsMin, int dotsMax, float resizeScale);
 
     [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern void destroyAllWindows();
@@ -87,7 +87,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     public double C = -5;
     public int DOT_THRESH_VAL_MIN = 100; //ドットノイズ弾き
     public int DOT_THRESH_VAL_MAX = 500; //エッジノイズ弾き
-
+    public float RESIZESCALE = 0.5f;
 
     //背景画像ファイル
     public string backgroundImgFile;// Assets/Image/○○
@@ -220,7 +220,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
                 result = callfindProjectorPose_Corner(projectorestimation,
                     pixels_ptr_,
                     initial_R, initial_T, dst_R, dst_T, error,
-                    camCornerNum, camMinDist, projCornerNum, projMinDist, thresh, mode, isKalman, C, DOT_THRESH_VAL_MIN, DOT_THRESH_VAL_MAX);
+                    camCornerNum, camMinDist, projCornerNum, projMinDist, thresh, mode, isKalman, C, DOT_THRESH_VAL_MIN, DOT_THRESH_VAL_MAX, RESIZESCALE);
             }
             //check_time = Time.realtimeSinceStartup * 1000 - check_time;
             //Debug.Log("all callfindProjectorPose_Corner :" + check_time + "ms");
