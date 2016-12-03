@@ -29,15 +29,15 @@ public class gui : MonoBehaviour {
     void OnGUI()
     {
 
-        if (GUI.Button(new Rect(20, 50, 150, 20), "パラメータ読み込み"))
+        if (GUI.Button(new Rect(20, 50, 150, 20), "カメラ起動"))
+        {
+            //procamManager.loadParam(int.Parse(camWidth), int.Parse(camHeight), int.Parse(proWidth), int.Parse(proHeight));
+            projectorposeestimationManager.init(30, int.Parse(camWidth), int.Parse(camHeight));
+        }
+        if (GUI.Button(new Rect(20, 70, 150, 20), "マスク生成"))//2回実行する！
         {
             procamManager.loadParam(int.Parse(camWidth), int.Parse(camHeight), int.Parse(proWidth), int.Parse(proHeight));
-            projectorposeestimationManager.init(30, int.Parse(camWidth), int.Parse(camHeight));
             projectorposeestimationManager.createCameraMaskImage();
-        }
-        if (GUI.Button(new Rect(20, 70, 150, 20), "投影"))
-        {
-            window.callProjection(int.Parse(proWidth), int.Parse(proHeight), int.Parse(num));     // 投影の切り替え
         }
         if (GUI.Button(new Rect(170, 50, 150, 20), "ドラえもん 表示/非表示"))
         {
@@ -45,7 +45,7 @@ public class gui : MonoBehaviour {
         }
         if (GUI.Button(new Rect(170, 70, 150, 20), "tracking start/stop"))
         {
-            projectorposeestimationManager.createCameraMaskImage();
+            //projectorposeestimationManager.createCameraMaskImage();
             TargetObj.GetComponent<WireFrame>().setWireFrame(); //トラッキング開始後にぶたのshaderのrender modeをFadeにする！
             projectorposeestimationManager.isTrack = !projectorposeestimationManager.isTrack;
 

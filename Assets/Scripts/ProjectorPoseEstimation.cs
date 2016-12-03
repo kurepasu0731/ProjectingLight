@@ -29,6 +29,17 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     private static extern void getPGRTexture(IntPtr camera, int device, IntPtr data, bool isCameraRecord, bool isShowWin);
     [DllImport("PGR_DLL", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern void showPixelData(IntPtr data);
+    //**ドット検出関連**//
+    [DllImport("PGR_DLL", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    private static extern void setDotsParameters(IntPtr camera, double AthreshVal, int DotThreshValMin, int DotThreshValMax, float resizeScale);
+    [DllImport("PGR_DLL", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    private static extern int getDotsCount(IntPtr camera);
+    [DllImport("PGR_DLL", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    private static extern void getDotsData(IntPtr camera, ref int data);
+    //マスク生成
+    [DllImport("PGR_DLL", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    private static extern void createCameraMask_pgr(IntPtr camera, IntPtr cam_data);
+
 
 
     [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
@@ -40,14 +51,19 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern bool callfindProjectorPose_Corner(IntPtr projectorestimation,
                                                                                  IntPtr cam_data,
+                                                                                 int dotsCount, int[] dots_data,
                                                                                  double[] initR, double[] initT,
                                                                                  double[] dstR, double[] dstT, double[] error,
-                                                                                 int camCornerNum, double camMinDist, int projCornerNum, double projMinDist, double thresh, int mode, bool isKalman, double C, int dotsMin, int dotsMax, float resizeScale);
+                                                                                 //int camCornerNum, double camMinDist, int projCornerNum, double projMinDist, 
+                                                                                 double thresh, int mode, bool isKalman);
+                                                                                 //double C, int dotsMin, int dotsMax, float resizeScale);
 
     [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern void destroyAllWindows();
     [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern void createCameraMask(IntPtr projectorestimation, IntPtr cam_data);
+    [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    private static extern void checkDotsArray(IntPtr projectorestimation, IntPtr cam_data, int dotsCount, int[] dots_data);
 
     public delegate void DebugLogDelegate(string str);
     DebugLogDelegate debugLogFunc = msg => Debug.Log(msg);
@@ -88,6 +104,10 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     public int DOT_THRESH_VAL_MIN = 100; //ドットノイズ弾き
     public int DOT_THRESH_VAL_MAX = 500; //エッジノイズ弾き
     public float RESIZESCALE = 0.5f;
+
+    //検出されたドットのデータ
+    private int dotsCount;
+    private int[] dotsData;
 
     //背景画像ファイル
     public string backgroundImgFile;// Assets/Image/○○
@@ -163,7 +183,8 @@ public class ProjectorPoseEstimation : MonoBehaviour {
 	// Use this for initialization
 	void Awake () {
         projectorestimation = openProjectorEstimation(camWidth, camHeight, proWidth, proHeight, backgroundImgFile, checkerRow, checkerCol, BlockSize, X_offset, Y_offset);
-        mask_texture = new Texture2D(cameraMask.width, cameraMask.height, TextureFormat.ARGB32, false);
+        camera_ = getPGR(camdevice);
+        mask_texture = new Texture2D(cameraMask.width, cameraMask.height, TextureFormat.ARGB32, true);
     }
 
 
@@ -217,10 +238,26 @@ public class ProjectorPoseEstimation : MonoBehaviour {
 
             if (pixels_ptr_ != System.IntPtr.Zero)
             {//位置推定(プロジェクタ画像更新なし)
-                result = callfindProjectorPose_Corner(projectorestimation,
-                    pixels_ptr_,
-                    initial_R, initial_T, dst_R, dst_T, error,
-                    camCornerNum, camMinDist, projCornerNum, projMinDist, thresh, mode, isKalman, C, DOT_THRESH_VAL_MIN, DOT_THRESH_VAL_MAX, RESIZESCALE);
+
+                //**ドット検出フェーズ**//
+                dotsCount = getDotsCount(camera_);
+                if (dotsCount > 0 && dotsCount < 10000)
+                {
+                    dotsData = new int[dotsCount * 2];
+                    getDotsData(camera_, ref dotsData[0]);
+
+                    result = callfindProjectorPose_Corner(projectorestimation,
+                        pixels_ptr_,
+                        dotsCount, dotsData,
+                        initial_R, initial_T, dst_R, dst_T, error,
+                        //camCornerNum, camMinDist, projCornerNum, projMinDist, 
+                        thresh, mode, isKalman);
+                        //C, DOT_THRESH_VAL_MIN, DOT_THRESH_VAL_MAX, RESIZESCALE);
+                }
+                else
+                {
+                    result = false;
+                }
             }
             //check_time = Time.realtimeSinceStartup * 1000 - check_time;
             //Debug.Log("all callfindProjectorPose_Corner :" + check_time + "ms");
@@ -246,6 +283,24 @@ public class ProjectorPoseEstimation : MonoBehaviour {
             //getCameraTexture(camera_, pixels_ptr_, isCameraRecord, true);
             //**PGRCAMERA**//
             getPGRTexture(camera_, camdevice, pixels_ptr_, isCameraRecord, true);
+
+            ////ドット検出テスト//
+            dotsCount = getDotsCount(camera_);
+            //Debug.Log("dots detected :" + dotsCount);
+
+            if (dotsCount > 0 && dotsCount < 10000)
+            {
+                dotsData = new int[dotsCount * 2];
+                getDotsData(camera_, ref dotsData[0]);
+                //Debug.Log(dotsData.Length);
+                //for (int i = 0; i < dotsCount; i++)
+                //{
+                //    Debug.Log(dotsData[i]);
+                //}
+                //渡せるか確認
+                checkDotsArray(camera_, pixels_ptr_, dotsCount, dotsData);
+                //showPixelData(pixels_ptr_);
+            }
             //showPixelData(pixels_ptr_);
 
             //check_time = Time.realtimeSinceStartup * 1000 - check_time;
@@ -291,8 +346,9 @@ public class ProjectorPoseEstimation : MonoBehaviour {
 
     public void initPGR(int cameraWidth, int cameraHeight)
     {
-        camera_ = getPGR(camdevice);
         initPGR(camera_, camdevice);
+        //ドット検出用パラメータセット
+        setDotsParameters(camera_, C, DOT_THRESH_VAL_MIN, DOT_THRESH_VAL_MAX, RESIZESCALE);
         texture_ = new Texture2D(cameraWidth, cameraHeight, TextureFormat.ARGB32, false);
         pixels_ = texture_.GetPixels32();
         pixels_handle_ = GCHandle.Alloc(pixels_, GCHandleType.Pinned);
@@ -339,7 +395,8 @@ public class ProjectorPoseEstimation : MonoBehaviour {
         texturePixelsHandle_ = GCHandle.Alloc(texturePixels_, GCHandleType.Pinned);
         texturePixelsPtr_ = texturePixelsHandle_.AddrOfPinnedObject();
 
-        createCameraMask(projectorestimation, texturePixelsPtr_);
+        createCameraMask(projectorestimation, texturePixelsPtr_); //マスク画像を保存、セット
+        createCameraMask_pgr(camera_, texturePixelsPtr_);//マスク画像をセット
 
         RenderTexture.active = null;
 
