@@ -817,6 +817,10 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 49790c29b49c03045ab5451d0de25adf, type: 2}
   m_IsPrefabParent: 0
+--- !u!4 &693115608 stripped
+Transform:
+  m_PrefabParentObject: {fileID: 480956, guid: 49790c29b49c03045ab5451d0de25adf, type: 2}
+  m_PrefabInternal: {fileID: 693115607}
 --- !u!1001 &737572854
 Prefab:
   m_ObjectHideFlags: 0
@@ -1268,6 +1272,81 @@ MonoBehaviour:
   width: 1920
   height: 1080
   fps: 30
+--- !u!1 &1259533646
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1259533647}
+  - 33: {fileID: 1259533650}
+  - 135: {fileID: 1259533649}
+  - 23: {fileID: 1259533648}
+  m_Layer: 8
+  m_Name: MaskSphere
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &1259533647
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1259533646}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.25, y: 0.21, z: 0.2}
+  m_Children: []
+  m_Father: {fileID: 693115608}
+  m_RootOrder: 6
+--- !u!23 &1259533648
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1259533646}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_Materials:
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 1
+  m_ReflectionProbeUsage: 1
+  m_ProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+--- !u!135 &1259533649
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1259533646}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!33 &1259533650
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1259533646}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &1368181006
 GameObject:
   m_ObjectHideFlags: 0
@@ -1483,9 +1562,9 @@ MonoBehaviour:
   thresh: 20
   mode: 4
   C: -5
-  DOT_THRESH_VAL_MIN: 50
+  DOT_THRESH_VAL_MIN: 100
   DOT_THRESH_VAL_MAX: 500
-  RESIZESCALE: 0.5
+  RESIZESCALE: 1
   backgroundImgFile: Assets/Image/dots/dots_80s_blurunder.png
   checkerRow: 10
   checkerCol: 17
