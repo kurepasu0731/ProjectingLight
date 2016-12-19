@@ -15,6 +15,7 @@ public class gui : MonoBehaviour {
     private string num = "0";
 
     private bool threshFlag = true;
+    private bool initialized = false;
 
 	// Use this for initialization
 	void Start () {
@@ -31,8 +32,12 @@ public class gui : MonoBehaviour {
 
         if (GUI.Button(new Rect(20, 50, 150, 20), "カメラ起動"))
         {
-            //procamManager.loadParam(int.Parse(camWidth), int.Parse(camHeight), int.Parse(proWidth), int.Parse(proHeight));
-            projectorposeestimationManager.init(30, int.Parse(camWidth), int.Parse(camHeight));
+            //再生モードのときはトラッキング開始直前にinit()する
+            if (projectorposeestimationManager.camdevice != -1)
+            {
+                projectorposeestimationManager.init(30, int.Parse(camWidth), int.Parse(camHeight));
+                initialized = true;
+            }
         }
         if (GUI.Button(new Rect(20, 70, 150, 20), "マスク生成"))//2回実行する！
         {
@@ -45,7 +50,13 @@ public class gui : MonoBehaviour {
         }
         if (GUI.Button(new Rect(170, 70, 150, 20), "tracking start/stop"))
         {
-            //projectorposeestimationManager.createCameraMaskImage();
+            //再生モードのときはトラッキング開始直前にinit()する
+            if (projectorposeestimationManager.camdevice == -1 && !initialized)
+            {
+                projectorposeestimationManager.init(30, int.Parse(camWidth), int.Parse(camHeight));
+                initialized = true;
+            }
+
             TargetObj.GetComponent<WireFrame>().setWireFrame(); //トラッキング開始後にぶたのshaderのrender modeをFadeにする！
             projectorposeestimationManager.isTrack = !projectorposeestimationManager.isTrack;
 

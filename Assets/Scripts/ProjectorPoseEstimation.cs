@@ -31,7 +31,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     private static extern void showPixelData(IntPtr data);
     //**ドット検出関連**//
     [DllImport("PGR_DLL", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-    private static extern void setDotsParameters(IntPtr camera, double AthreshVal, int DotThreshValMin, int DotThreshValMax, float resizeScale);
+    private static extern void setDotsParameters(IntPtr camera, double AthreshVal, int DotThreshValMin, int DotThreshValMax, int DotThreshValBright, float resizeScale);
     [DllImport("PGR_DLL", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern int getDotsCount(IntPtr camera);
     [DllImport("PGR_DLL", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
@@ -103,6 +103,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     public double C = -5;
     public int DOT_THRESH_VAL_MIN = 100; //ドットノイズ弾き
     public int DOT_THRESH_VAL_MAX = 500; //エッジノイズ弾き
+    public int DOT_THRESH_VAL_BRIGHT = 100; //ドット色閾値
     public float RESIZESCALE = 0.5f;
 
     //検出されたドットのデータ
@@ -153,10 +154,10 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     public bool VIDEOREC = false;//トラッキングしてるときに録画するかどうか
 
 
-    ////録画した時のプロジェクタの初期値(recordedInitialValue.txtからコピペする)
-    //private bool isfirst = true; //最初のフレームだけ
-    //private double[] recordedInitialR = { 0.659133818639633,-0.0200499252027763,-0.751758345231297,-0.00118308540885864,0.999615643030721,-0.0276977709787877,0.752024739908502,0.0191459318822852,0.658856755188795 };
-    //private double[] recordedInitialT = { 503.653325643345, -265.302786440286, 519.213222703862 };
+    //録画した時のプロジェクタの初期値(recordedInitialValue.txtからコピペする)
+    private bool isfirst = true; //最初のフレームだけ
+    private double[] recordedInitialR = { 0.659133818639633, -0.0200499252027763, -0.751758345231297, -0.00118308540885864, 0.999615643030721, -0.0276977709787877, 0.752024739908502, 0.0191459318822852, 0.658856755188795 };
+    private double[] recordedInitialT = { 503.653325643345, -265.302786440286, 519.213222703862 };
 
 
     //WebCamera関係
@@ -193,35 +194,36 @@ public class ProjectorPoseEstimation : MonoBehaviour {
 
         if (isTrack == true)
         {
-/*
-            //録画時
-            //録画開始時の初期値を記録しておく
+
+            ////録画時
+            ////録画開始時の初期値を記録しておく
             //if (isCameraRecord)
-            {
-                if (isfirst)
-                {
-                    ////録画時
-                    //Encoding sjisEnc = Encoding.GetEncoding("Shift_JIS");
-                    //StreamWriter writer = new StreamWriter(@"recordedInitialValue.txt", false, sjisEnc);
-                    //for (int i = 0; i < 9; i++)
-                    //{
-                    //    writer.Write(initial_R[i] + ",");
-                    //}
-                    //writer.WriteLine();
-                    //for (int i = 0; i < 3; i++)
-                    //{
-                    //    writer.Write(initial_T[i] + ",");
-                    //}
-                    //writer.Close();
+            //{
+            //    if (isfirst)
+            //    {
+            //        ////録画時
+            //        //if (result)
+            //        //{
+            //        //    Encoding sjisEnc = Encoding.GetEncoding("Shift_JIS");
+            //        //    StreamWriter writer = new StreamWriter(@"recordedInitialValue.txt", false, sjisEnc);
+            //        //    for (int i = 0; i < 9; i++)
+            //        //    {
+            //        //        writer.Write(dst_R[i] + ",");
+            //        //    }
+            //        //    writer.WriteLine();
+            //        //    for (int i = 0; i < 3; i++)
+            //        //    {
+            //        //        writer.Write(dst_T[i] + ",");
+            //        //    }
+            //        //    writer.Close();
+            //        //}
+            //        ////再生時
+            //        //initial_R = recordedInitialR;
+            //        //initial_T = recordedInitialT;
+            //        isfirst = false;
+            //    }
+            //}
 
-                    //再生時
-                    //initial_R = recordedInitialR;
-                    //initial_T = recordedInitialT;
-
-                    isfirst = false;
-                }
-            }
-*/
             //★処理時間計測
             //check_time = Time.realtimeSinceStartup * 1000;
             //カメラの画像取ってくる
@@ -239,12 +241,22 @@ public class ProjectorPoseEstimation : MonoBehaviour {
             if (pixels_ptr_ != System.IntPtr.Zero)
             {//位置推定(プロジェクタ画像更新なし)
 
+                //★処理時間計測
+                //check_time = Time.realtimeSinceStartup * 1000;
                 //**ドット検出フェーズ**//
                 dotsCount = getDotsCount(camera_);
                 if (dotsCount > 0 && dotsCount < 10000)
                 {
+
                     dotsData = new int[dotsCount * 2];
                     getDotsData(camera_, ref dotsData[0]);
+
+                    //★処理時間計測
+                    //check_time = Time.realtimeSinceStartup * 1000 - check_time;
+                    //Debug.Log("getDotsData :" + check_time + "ms");
+
+                    //★処理時間計測
+                    //check_time = Time.realtimeSinceStartup * 1000;
 
                     result = callfindProjectorPose_Corner(projectorestimation,
                         pixels_ptr_,
@@ -253,6 +265,10 @@ public class ProjectorPoseEstimation : MonoBehaviour {
                         //camCornerNum, camMinDist, projCornerNum, projMinDist, 
                         thresh, mode, isKalman);
                         //C, DOT_THRESH_VAL_MIN, DOT_THRESH_VAL_MAX, RESIZESCALE);
+
+                    //★処理時間計測
+                    //check_time = Time.realtimeSinceStartup * 1000 - check_time;
+                    //Debug.Log("caluclate :" + check_time + "ms");
                 }
                 else
                 {
@@ -348,7 +364,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     {
         initPGR(camera_, camdevice);
         //ドット検出用パラメータセット
-        setDotsParameters(camera_, C, DOT_THRESH_VAL_MIN, DOT_THRESH_VAL_MAX, RESIZESCALE);
+        setDotsParameters(camera_, C, DOT_THRESH_VAL_MIN, DOT_THRESH_VAL_MAX, DOT_THRESH_VAL_BRIGHT, RESIZESCALE);
         texture_ = new Texture2D(cameraWidth, cameraHeight, TextureFormat.ARGB32, false);
         pixels_ = texture_.GetPixels32();
         pixels_handle_ = GCHandle.Alloc(pixels_, GCHandleType.Pinned);

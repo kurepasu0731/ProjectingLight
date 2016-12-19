@@ -684,31 +684,31 @@ Prefab:
     m_Modifications:
     - target: {fileID: 480956, guid: 49790c29b49c03045ab5451d0de25adf, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 0.1204
+      value: 0.1006
       objectReference: {fileID: 0}
     - target: {fileID: 480956, guid: 49790c29b49c03045ab5451d0de25adf, type: 2}
       propertyPath: m_LocalPosition.y
-      value: -0.1137
+      value: -0.0947
       objectReference: {fileID: 0}
     - target: {fileID: 480956, guid: 49790c29b49c03045ab5451d0de25adf, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 0.6184
+      value: 0.6087
       objectReference: {fileID: 0}
     - target: {fileID: 480956, guid: 49790c29b49c03045ab5451d0de25adf, type: 2}
       propertyPath: m_LocalRotation.x
-      value: -0.44253203
+      value: -0.42652166
       objectReference: {fileID: 0}
     - target: {fileID: 480956, guid: 49790c29b49c03045ab5451d0de25adf, type: 2}
       propertyPath: m_LocalRotation.y
-      value: -0.5697192
+      value: -0.5551685
       objectReference: {fileID: 0}
     - target: {fileID: 480956, guid: 49790c29b49c03045ab5451d0de25adf, type: 2}
       propertyPath: m_LocalRotation.z
-      value: -0.58032256
+      value: -0.596102
       objectReference: {fileID: 0}
     - target: {fileID: 480956, guid: 49790c29b49c03045ab5451d0de25adf, type: 2}
       propertyPath: m_LocalRotation.w
-      value: 0.3779038
+      value: 0.39310253
       objectReference: {fileID: 0}
     - target: {fileID: 480956, guid: 49790c29b49c03045ab5451d0de25adf, type: 2}
       propertyPath: m_RootOrder
@@ -1562,8 +1562,9 @@ MonoBehaviour:
   thresh: 20
   mode: 4
   C: -5
-  DOT_THRESH_VAL_MIN: 100
+  DOT_THRESH_VAL_MIN: 50
   DOT_THRESH_VAL_MAX: 500
+  DOT_THRESH_VAL_BRIGHT: 100
   RESIZESCALE: 1
   backgroundImgFile: Assets/Image/dots/dots_80s_blurunder.png
   checkerRow: 10
