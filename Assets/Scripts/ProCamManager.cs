@@ -381,7 +381,10 @@ public class ProCamManager : MonoBehaviour {
         //t_RotateMatrix = m * t_RotateMatrix;
         camTvec.y = -camTvec.y;
 
-        mainProjector.transform.position = camTvec;
+        if (!float.IsNaN(camTvec.x) && !float.IsNaN(camTvec.y) && !float.IsNaN(camTvec.z))
+        {
+            mainProjector.transform.position = camTvec;
+        }
 
         //Matrix4x4 -> Quarternionへ
         double[] quart = new double[4];
@@ -390,7 +393,10 @@ public class ProCamManager : MonoBehaviour {
         //Quaternion q = QuaternionFromMatrix(t_RotateMatrix);
         //Quaternion q = MatrixToQuaternion(t_RotateMatrix);
         //mainProjector.transform.eulerAngles = new Vector3(-q.eulerAngles.x,q.eulerAngles.y, -q.eulerAngles.z);
-        mainProjector.transform.rotation = new Quaternion(-q.x, q.y, -q.z, q.w); //Unityの座標軸と全軸逆向き
+        if (!float.IsNaN(q.x) && !float.IsNaN(q.y) && !float.IsNaN(q.z) && !float.IsNaN(q.w))
+        {
+            mainProjector.transform.rotation = new Quaternion(-q.x, q.y, -q.z, q.w); //Unityの座標軸と全軸逆向き
+        }
 
     }
 
