@@ -43,7 +43,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
 
 
     [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-    private static extern IntPtr openProjectorEstimation(int camWidth, int camHeight, int proWidth, int proHeight, string backgroundImgFile,
+    private static extern IntPtr openProjectorEstimation(int camWidth, int camHeight, int proWidth, int proHeight, double trackingtime, string backgroundImgFile,
                                                          int checkerRow, int checkerCol, int blockSize, int x_offset, int y_offset);
     [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern void callloadParam(IntPtr projectorestimation, double[] initR, double[] initT);
@@ -55,7 +55,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
                                                                                  double[] initR, double[] initT,
                                                                                  double[] dstR, double[] dstT, double[] error,
                                                                                  //int camCornerNum, double camMinDist, int projCornerNum, double projMinDist, 
-                                                                                 double thresh, int mode, bool isKalman);
+                                                                                 double thresh, int mode, bool isKalman, bool isPredict);
                                                                                  //double C, int dotsMin, int dotsMax, float resizeScale);
 
     [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
@@ -139,7 +139,10 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     public bool isTrack = false;
     //カルマンフィルタ使うかどうか
     public bool isKalman = true;
-
+    //動き予測するかどうか
+    public bool isPredict = false;
+    //遅延補償する時間(ms)
+    public double trackingTime;
     //csv記録するかどうか
     [HideInInspector]
     public bool isRecord = false;
@@ -183,7 +186,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
 
 	// Use this for initialization
 	void Awake () {
-        projectorestimation = openProjectorEstimation(camWidth, camHeight, proWidth, proHeight, backgroundImgFile, checkerRow, checkerCol, BlockSize, X_offset, Y_offset);
+        projectorestimation = openProjectorEstimation(camWidth, camHeight, proWidth, proHeight, trackingTime, backgroundImgFile, checkerRow, checkerCol, BlockSize, X_offset, Y_offset);
         camera_ = getPGR(camdevice);
         mask_texture = new Texture2D(cameraMask.width, cameraMask.height, TextureFormat.ARGB32, true);
     }
@@ -266,7 +269,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
                         dotsCount, dotsData,
                         initial_R, initial_T, dst_R, dst_T, error,
                         //camCornerNum, camMinDist, projCornerNum, projMinDist, 
-                        thresh, mode, isKalman);
+                        thresh, mode, isKalman, isPredict);
                         //C, DOT_THRESH_VAL_MIN, DOT_THRESH_VAL_MAX, RESIZESCALE);
 
                     if (double.IsNaN(dst_R[0]) || double.IsNaN(dst_R[1]) || double.IsNaN(dst_R[2]) ||
