@@ -229,7 +229,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
             //    }
             //}
 
-            //★処理時間計測
+            ////★処理時間計測
             //check_time = Time.realtimeSinceStartup * 1000;
             //カメラの画像取ってくる
             //**WEBCAMERA**//
@@ -246,7 +246,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
             if (pixels_ptr_ != System.IntPtr.Zero)
             {//位置推定(プロジェクタ画像更新なし)
 
-                //★処理時間計測
+                ////★処理時間計測
                 //check_time = Time.realtimeSinceStartup * 1000;
                 //**ドット検出フェーズ**//
                 dotsCount = getDotsCount(camera_);
@@ -257,11 +257,11 @@ public class ProjectorPoseEstimation : MonoBehaviour {
                     getDotsData(camera_, ref dotsData[0]);
 
 
-                    //★処理時間計測
+                    ////★処理時間計測
                     //check_time = Time.realtimeSinceStartup * 1000 - check_time;
                     //Debug.Log("getDotsData :" + check_time + "ms");
 
-                    //★処理時間計測
+                    ////★処理時間計測
                     //check_time = Time.realtimeSinceStartup * 1000;
 
                     result = callfindProjectorPose_Corner(projectorestimation,
@@ -280,7 +280,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
                         result = false;
                     }
 
-                    //★処理時間計測
+                    ////★処理時間計測
                     //check_time = Time.realtimeSinceStartup * 1000 - check_time;
                     //Debug.Log("caluclate :" + check_time + "ms");
                 }
