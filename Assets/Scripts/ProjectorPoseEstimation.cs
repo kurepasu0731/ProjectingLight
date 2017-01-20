@@ -194,6 +194,8 @@ public class ProjectorPoseEstimation : MonoBehaviour {
 
         if (isTrack == true)
         {
+            //一旦初期化
+            result = false;
 
             ////録画時
             ////録画開始時の初期値を記録しておく
@@ -251,6 +253,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
                     dotsData = new int[dotsCount * 2];
                     getDotsData(camera_, ref dotsData[0]);
 
+
                     //★処理時間計測
                     //check_time = Time.realtimeSinceStartup * 1000 - check_time;
                     //Debug.Log("getDotsData :" + check_time + "ms");
@@ -288,11 +291,11 @@ public class ProjectorPoseEstimation : MonoBehaviour {
 
             if (result)
             {
-                if (!(double.IsNaN(dst_R[0]) || double.IsNaN(dst_R[1]) || double.IsNaN(dst_R[2]) ||
-                       double.IsNaN(dst_R[3]) || double.IsNaN(dst_R[4]) || double.IsNaN(dst_R[5]) ||
-                       double.IsNaN(dst_R[6]) || double.IsNaN(dst_R[7]) || double.IsNaN(dst_R[8]) ||
-                       double.IsNaN(dst_T[0]) || double.IsNaN(dst_T[1]) || double.IsNaN(dst_T[2])))
-                {
+                if (!double.IsNaN(dst_R[0]) && !double.IsNaN(dst_R[1]) && !double.IsNaN(dst_R[2]) &&
+                        !double.IsNaN(dst_R[3]) && !double.IsNaN(dst_R[4]) && !double.IsNaN(dst_R[5]) &&
+                        !double.IsNaN(dst_R[6]) && !double.IsNaN(dst_R[7]) && !double.IsNaN(dst_R[8]) &&
+                        !double.IsNaN(dst_T[0]) && !double.IsNaN(dst_T[1]) && !double.IsNaN(dst_T[2]))
+                    {
                     //プロジェクタの外部パラメータ更新
                     procamManager.UpdateProjectorExternalParam(dst_R, dst_T);
 
@@ -303,10 +306,14 @@ public class ProjectorPoseEstimation : MonoBehaviour {
                     initial_R = dst_R;
                     initial_T = dst_T;
                 }
+                else
+                {
+                    Debug.Log("Nan!!");
+                }
             }
             else
             {
-                Debug.Log("failed");
+                 Debug.Log("failed");
             }
         }
         //WebCameraの初期化が終わっていたら、画像表示開始

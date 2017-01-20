@@ -36,6 +36,10 @@ public class ProCamManager : MonoBehaviour {
     //プロジェクタとカメラの距離(tのノルム)
     public double nolm = 0.0;
 
+    //プロジェクタの軌跡を残す間隔（フレーム）
+    public int interval = 10;
+    private int counter = 0;
+
 
 	// Use this for initialization
 	void Start () {
@@ -384,6 +388,29 @@ public class ProCamManager : MonoBehaviour {
         if (!float.IsNaN(camTvec.x) && !float.IsNaN(camTvec.y) && !float.IsNaN(camTvec.z))
         {
             mainProjector.transform.position = camTvec;
+
+            ////可視化
+            //if (counter == interval)
+            //{
+            //    //**プロジェクタの軌跡**//
+            //    //GameObject sphere = (GameObject)Instantiate(Resources.Load("Prefabs/ProjectorPosition"), camTvec, Quaternion.identity);
+            //    //UnityEditor.PrefabUtility.CreatePrefab("Assets/Resources/Prefabs/ProjectorPosition/projector_" + Time.time + ".prefab", sphere);  // プレハブ化
+            //    //**Rayを表示**//
+            //    Ray ray = mainProjector.ScreenPointToRay(new Vector3(1280 / 2, 800 / 4)); //スクリーン座標系は左下原点
+            //    RaycastHit hit;
+            //    if (Physics.Raycast(ray, out hit))
+            //    {
+            //        //Rayを画面に表示
+            //        float distance = Vector3.Distance(hit.point, ray.origin);
+            //        Debug.DrawRay(ray.origin, ray.direction * distance, Color.blue, 100000000, false);
+            //    }
+
+            //    counter = 0;
+            //}
+            //else
+            //{
+            //    counter++;
+            //}
         }
 
         //Matrix4x4 -> Quarternionへ
