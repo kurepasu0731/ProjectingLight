@@ -50,7 +50,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     //プロジェクタ画像更新なし
     [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern bool callfindProjectorPose_Corner(IntPtr projectorestimation,
-                                                                                 IntPtr cam_data,
+                                                                                 //IntPtr cam_data,
                                                                                  int dotsCount, int[] dots_data,
                                                                                  double[] initR, double[] initT,
                                                                                  double[] dstR, double[] dstT, double[] error,
@@ -235,7 +235,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
             //**WEBCAMERA**//
             //getCameraTexture(camera_, pixels_ptr_, isCameraRecord, false);
             //**PGRCAMERA**//
-            getPGRTexture(camera_, camdevice, pixels_ptr_, isCameraRecord, false);
+//            getPGRTexture(camera_, camdevice, pixels_ptr_, isCameraRecord, false);
 
             //check_time = Time.realtimeSinceStartup * 1000 - check_time;
             //Debug.Log("getCameraTexture :" + check_time + "ms");
@@ -243,8 +243,8 @@ public class ProjectorPoseEstimation : MonoBehaviour {
             //★処理時間計測
             //check_time = Time.realtimeSinceStartup * 1000;
 
-            if (pixels_ptr_ != System.IntPtr.Zero)
-            {//位置推定(プロジェクタ画像更新なし)
+            //if (pixels_ptr_ != System.IntPtr.Zero)
+            //{//位置推定(プロジェクタ画像更新なし)
 
                 ////★処理時間計測
                 //check_time = Time.realtimeSinceStartup * 1000;
@@ -265,7 +265,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
                     //check_time = Time.realtimeSinceStartup * 1000;
 
                     result = callfindProjectorPose_Corner(projectorestimation,
-                        pixels_ptr_,
+                        //pixels_ptr_,
                         dotsCount, dotsData,
                         initial_R, initial_T, dst_R, dst_T, error,
                         //camCornerNum, camMinDist, projCornerNum, projMinDist, 
@@ -288,7 +288,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
                 {
                     result = false;
                 }
-            }
+            //}
             //check_time = Time.realtimeSinceStartup * 1000 - check_time;
             //Debug.Log("all callfindProjectorPose_Corner :" + check_time + "ms");
 
@@ -328,8 +328,12 @@ public class ProjectorPoseEstimation : MonoBehaviour {
             //getCameraTexture(camera_, pixels_ptr_, isCameraRecord, true);
             //**PGRCAMERA**//
             getPGRTexture(camera_, camdevice, pixels_ptr_, isCameraRecord, true);
+            //check_time = Time.realtimeSinceStartup * 1000 - check_time;
+            //Debug.Log("getCameraTexture :" + check_time + "ms");
 
             ////ドット検出テスト//
+            //★処理時間計測
+            //check_time = Time.realtimeSinceStartup * 1000;
             dotsCount = getDotsCount(camera_);
             //Debug.Log("dots detected :" + dotsCount);
 
@@ -348,8 +352,6 @@ public class ProjectorPoseEstimation : MonoBehaviour {
             }
             //showPixelData(pixels_ptr_);
 
-            //check_time = Time.realtimeSinceStartup * 1000 - check_time;
-            //Debug.Log("getCameraTexture :" + check_time + "ms");
 
         }
 	}
