@@ -54,6 +54,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
                                                                                  int dotsCount, int[] dots_data,
                                                                                  double[] initR, double[] initT,
                                                                                  double[] dstR, double[] dstT, double[] error,
+                                                                                 double[] dstR_predict, double[] dstT_predict,
                                                                                  //int camCornerNum, double camMinDist, int projCornerNum, double projMinDist, 
                                                                                  double thresh, int mode, bool isKalman, bool isPredict);
                                                                                  //double C, int dotsMin, int dotsMax, float resizeScale);
@@ -132,6 +133,11 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     private double[] dst_T = new double[3];
     //1フレームでの対応点の再投影誤差
     private double[] error = new double[1];
+
+    //予測結果
+    private double[] dst_R_predict = new double[9];
+    private double[] dst_T_predict = new double[3];
+
 
     //推定できたかどうか
     private bool result = false;
@@ -268,6 +274,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
                         //pixels_ptr_,
                         dotsCount, dotsData,
                         initial_R, initial_T, dst_R, dst_T, error,
+                        dst_R_predict, dst_T_predict,
                         //camCornerNum, camMinDist, projCornerNum, projMinDist, 
                         thresh, mode, isKalman, isPredict);
                         //C, DOT_THRESH_VAL_MIN, DOT_THRESH_VAL_MAX, RESIZESCALE);
@@ -299,8 +306,15 @@ public class ProjectorPoseEstimation : MonoBehaviour {
                         !double.IsNaN(dst_R[6]) && !double.IsNaN(dst_R[7]) && !double.IsNaN(dst_R[8]) &&
                         !double.IsNaN(dst_T[0]) && !double.IsNaN(dst_T[1]) && !double.IsNaN(dst_T[2]))
                     {
-                    //プロジェクタの外部パラメータ更新
-                    procamManager.UpdateProjectorExternalParam(dst_R, dst_T);
+                        //プロジェクタの外部パラメータ更新
+                        if (isPredict)//予測ありのときは予測値で更新
+                        {
+                            procamManager.UpdateProjectorExternalParam(dst_R_predict, dst_T_predict);
+                        }
+                        else
+                        {
+                            procamManager.UpdateProjectorExternalParam(dst_R, dst_T);
+                        }
 
                     //csvに記録
                     if (isRecord) Record_T(dst_T, error[0]);
