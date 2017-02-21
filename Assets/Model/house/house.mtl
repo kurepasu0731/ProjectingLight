@@ -1,0 +1,453 @@
+# Blender MTL File: 'None'
+# Material Count: 47
+
+newmtl 0011_Seashell.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.800000 0.768800 0.746400
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl 11.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.602400 0.602400 0.602400
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl 13.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.705600 0.671200 0.640000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl 14.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.097600 0.091200 0.088000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl 15.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.533600 0.533600 0.533600
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 0.500000
+illum 2
+
+newmtl 16.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.176000 0.153600 0.132000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 0.000000
+illum 2
+map_Kd C:\Users\Koizumi Ryo\Documents\3Dmodel\house\model\16.jpg
+map_d C:\\Users\\Koizumi Ryo\\Documents\\3Dmodel\\house\\model\\16.jpg
+
+newmtl 17.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.448800 0.031200 0.068800
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl 18.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.756000 0.640000 0.382400
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl 2.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.618400 0.467200 0.181600
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl 22.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.511200 0.420000 0.320000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl 6.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.147200 0.012800 0.053600
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl 7.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.398400 0.398400 0.398400
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl 8.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.605600 0.323200 0.106400
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 0.000000
+illum 2
+map_Kd C:\Users\Koizumi Ryo\Documents\3Dmodel\house\model\8.jpg
+map_d C:\\Users\\Koizumi Ryo\\Documents\\3Dmodel\\house\\model\\8.jpg
+
+newmtl 9.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.599200 0.323200 0.404800
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl 969696.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.300800 0.300800 0.300800
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl Black.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.000000 0.000000 0.000000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl Charcoal.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.109600 0.109600 0.109600
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl Color_0081.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.094400 0.094400 0.094400
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl Corrogated_Shiny.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.605600 0.605600 0.605600
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 0.000000
+illum 2
+map_Kd C:\Users\Koizumi Ryo\Documents\3Dmodel\house\model\Corrogated_Shiny.jpg
+map_d C:\\Users\\Koizumi Ryo\\Documents\\3Dmodel\\house\\model\\Corrogated_Shiny.jpg
+
+newmtl Corrogated_Shiny1.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl DarkGray.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.254400 0.254400 0.254400
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl Default_Material.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl Gainsboro.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.592800 0.800000 0.618400
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl GrassGreen.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.060000 0.213600 0.044000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl LightGray.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.530400 0.530400 0.530400
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl SaddleBrown.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.436000 0.216800 0.060000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl Shiny.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.166400 0.176000 0.197600
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl Snow.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.800000 0.784000 0.784000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl Snow1.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl Yellow.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.800000 0.800000 0.000000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl _000.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl _002.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.620800 0.620800 0.620800
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl _005.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.357600 0.357600 0.357600
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl _006.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.269600 0.269600 0.269600
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl _009.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.000000 0.000000 0.000000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl _I19.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.191200 0.191200 0.320000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl carpet.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.517600 0.517600 0.517600
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 0.000000
+illum 2
+map_Kd C:\Users\Koizumi Ryo\Documents\3Dmodel\house\model\carpet.jpg
+map_d C:\\Users\\Koizumi Ryo\\Documents\\3Dmodel\\house\\model\\carpet.jpg
+
+newmtl espresso_horizontal.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.138400 0.084800 0.053600
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 0.000000
+illum 2
+map_Kd C:\Users\Koizumi Ryo\Documents\3Dmodel\house\model\espresso_horizontal.jpg
+map_d C:\\Users\\Koizumi Ryo\\Documents\\3Dmodel\\house\\model\\espresso_horizontal.jpg
+
+newmtl keyboard.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.605600 0.605600 0.605600
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 0.000000
+illum 2
+map_Kd C:\Users\Koizumi Ryo\Documents\3Dmodel\house\model\keyboard.jpg
+map_d C:\\Users\\Koizumi Ryo\\Documents\\3Dmodel\\house\\model\\keyboard.jpg
+
+newmtl mat.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.499200 0.480000 0.464000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 0.000000
+illum 2
+map_Kd C:\Users\Koizumi Ryo\Documents\3Dmodel\house\model\mat.jpg
+map_d C:\\Users\\Koizumi Ryo\\Documents\\3Dmodel\\house\\model\\mat.jpg
+
+newmtl roof.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.527200 0.527200 0.517600
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 0.000000
+illum 2
+map_Kd C:\Users\Koizumi Ryo\Documents\3Dmodel\house\model\roof.jpg
+map_d C:\\Users\\Koizumi Ryo\\Documents\\3Dmodel\\house\\model\\roof.jpg
+
+newmtl soil.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.295200 0.241600 0.169600
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 0.000000
+illum 2
+map_Kd C:\Users\Koizumi Ryo\Documents\3Dmodel\house\model\soil.jpg
+map_d C:\\Users\\Koizumi Ryo\\Documents\\3Dmodel\\house\\model\\soil.jpg
+
+newmtl table.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.207200 0.081600 0.040800
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 0.000000
+illum 2
+map_Kd C:\Users\Koizumi Ryo\Documents\3Dmodel\house\model\table.jpg
+map_d C:\\Users\\Koizumi Ryo\\Documents\\3Dmodel\\house\\model\\table.jpg
+
+newmtl tv_ruck.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.248000 0.138400 0.068800
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 0.000000
+illum 2
+map_Kd C:\Users\Koizumi Ryo\Documents\3Dmodel\house\model\tv_ruck.jpg
+map_d C:\\Users\\Koizumi Ryo\\Documents\\3Dmodel\\house\\model\\tv_ruck.jpg
+
+newmtl wall.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.677600 0.605600 0.470400
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 0.000000
+illum 2
+map_Kd C:\Users\Koizumi Ryo\Documents\3Dmodel\house\model\wall.jpg
+map_d C:\\Users\\Koizumi Ryo\\Documents\\3Dmodel\\house\\model\\wall.jpg
+
+newmtl wall2.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.392000 0.432800 0.574400
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 0.000000
+illum 2
+map_Kd C:\Users\Koizumi Ryo\Documents\3Dmodel\house\model\wall2.jpg
+map_d C:\\Users\\Koizumi Ryo\\Documents\\3Dmodel\\house\\model\\wall2.jpg
+
+newmtl window.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.442400 0.496000 0.455200
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 0.000000
+illum 2
+map_Kd C:\Users\Koizumi Ryo\Documents\3Dmodel\house\model\window.jpg
+map_d C:\\Users\\Koizumi Ryo\\Documents\\3Dmodel\\house\\model\\window.jpg
