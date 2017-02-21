@@ -31,7 +31,7 @@ public class gui : MonoBehaviour {
     void OnGUI()
     {
 
-        if (GUI.Button(new Rect(20, 50, 150, 20), "カメラ起動"))
+        if (GUI.Button(new Rect(20, 70, 150, 20), "2.カメラ起動"))
         {
             //再生モードのときはトラッキング開始直前にinit()する
             if (projectorposeestimationManager.camdevice != -1)
@@ -40,16 +40,12 @@ public class gui : MonoBehaviour {
                 initialized = true;
             }
         }
-        if (GUI.Button(new Rect(20, 70, 150, 20), "マスク生成"))//2回実行する！
+        if (GUI.Button(new Rect(20, 50, 150, 20), "1.マスク生成"))//2回実行する！
         {
             procamManager.loadParam(int.Parse(camWidth), int.Parse(camHeight), int.Parse(proWidth), int.Parse(proHeight));
             projectorposeestimationManager.createCameraMaskImage();
         }
-        if (GUI.Button(new Rect(170, 50, 150, 20), "ドラえもん 表示/非表示"))
-        {
-            TargetObj.SetActive(!TargetObj.activeInHierarchy);
-        }
-        if (GUI.Button(new Rect(170, 70, 150, 20), "tracking start/stop"))
+        if (GUI.Button(new Rect(170, 70, 150, 20), "3.tracking start/stop"))
         {
             //再生モードのときはトラッキング開始直前にinit()する
             if (projectorposeestimationManager.camdevice == -1 && !initialized)
@@ -80,19 +76,6 @@ public class gui : MonoBehaviour {
             {
                 projectorposeestimationManager.isCameraRecord = !projectorposeestimationManager.isCameraRecord;
             }
-
-        }
-        if (GUI.Button(new Rect(320, 70, 150, 20), "thresh 切り替え"))
-        {
-            if (threshFlag == true)
-            {
-                projectorposeestimationManager.thresh = 10;
-            }
-            else
-            {
-                projectorposeestimationManager.thresh = 20;
-            }
-            threshFlag = !threshFlag;
 
         }
 /*

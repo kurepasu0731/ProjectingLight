@@ -93,19 +93,19 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     public int camdevice = 0;
 
     //コーナー検出で用いるパラメータ
-    public int camCornerNum = 500;
-    public int camMinDist = 5;
+    public int camCornerNum = 200;
+    public int camMinDist = 50;
     public int projCornerNum = 500;
-    public int projMinDist = 10;
-    public double thresh = 50;
-    public int mode = 2;
+    public int projMinDist = 20;
+    public double thresh = 20; //対応点間の閾値(加重平均撮った距離を閾値で切ってる)
+    public int mode = 4;
 
     //ドット検出用パラメータ
     public double C = -5;
-    public int DOT_THRESH_VAL_MIN = 100; //ドットノイズ弾き
+    public int DOT_THRESH_VAL_MIN = 50; //ドットノイズ弾き
     public int DOT_THRESH_VAL_MAX = 500; //エッジノイズ弾き
     public int DOT_THRESH_VAL_BRIGHT = 100; //ドット色閾値
-    public float RESIZESCALE = 0.5f;
+    public float RESIZESCALE = 1.0f;
 
     //検出されたドットのデータ
     private int dotsCount;
@@ -148,7 +148,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     //動き予測するかどうか
     public bool isPredict = false;
     //遅延補償する時間(ms)
-    public double trackingTime;
+    public double trackingTime = 113; //[ms]
     //csv記録するかどうか
     [HideInInspector]
     public bool isRecord = false;
