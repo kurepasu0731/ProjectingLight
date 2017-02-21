@@ -29,3 +29,5 @@ ExportedObj/
 Icon?
 ehthumbs.db
 Thumbs.db
+/Calibration/calibration.xml
+/Calibration/reconstructPoints_camera.xml

@@ -1483,7 +1483,7 @@ MonoBehaviour:
   isTrack: 0
   isKalman: 1
   isPredict: 1
-  trackingTime: 120
+  trackingTime: 113
   isRecord: 0
   isCameraRecord: 0
   CSVREC: 0
