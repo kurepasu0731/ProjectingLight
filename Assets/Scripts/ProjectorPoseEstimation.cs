@@ -40,14 +40,12 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     //プロジェクタ画像更新なし
     [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern bool callfindProjectorPose_Corner(IntPtr projectorestimation,
-                                                                                 //IntPtr cam_data,
                                                                                  int dotsCount, int[] dots_data,
                                                                                  double[] initR, double[] initT,
-                                                                                 double[] dstR, double[] dstT, double[] error,
+                                                                                 double[] dstR, double[] dstT, 
+                                                                                 double[] error,
                                                                                  double[] dstR_predict, double[] dstT_predict,
-                                                                                 //int camCornerNum, double camMinDist, int projCornerNum, double projMinDist, 
-                                                                                 double thresh, int mode, bool isKalman, bool isPredict);
-                                                                                 //double C, int dotsMin, int dotsMax, float resizeScale);
+                                                                                 double thresh, bool isKalman, bool isPredict);
 
     [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern void destroyAllWindows();
@@ -82,7 +80,6 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     public int projCornerNum = 500;
     public int projMinDist = 20;
     public double thresh = 20; //対応点間の閾値(加重平均撮った距離を閾値で切ってる)
-    public int mode = 4;
 
     //ドット検出用パラメータ
     public double C = -5;
@@ -204,13 +201,10 @@ public class ProjectorPoseEstimation : MonoBehaviour {
                 ////★処理時間計測
                 //check_time = Time.realtimeSinceStartup * 1000;
                 result = callfindProjectorPose_Corner(projectorestimation,
-                    //pixels_ptr_,
                     dotsCount, dotsData,
                     initial_R, initial_T, dst_R, dst_T, error,
                     dst_R_predict, dst_T_predict,
-                    //camCornerNum, camMinDist, projCornerNum, projMinDist, 
-                    thresh, mode, isKalman, isPredict);
-                //C, DOT_THRESH_VAL_MIN, DOT_THRESH_VAL_MAX, RESIZESCALE);
+                    thresh, isKalman, isPredict);
                 ////★処理時間計測
                 //check_time = Time.realtimeSinceStartup * 1000 - check_time;
                 //Debug.Log("caluclate :" + check_time + "ms");
