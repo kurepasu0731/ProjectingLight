@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class gui : MonoBehaviour {
+public class gui : MonoBehaviour
+{
 
     public ProjectionWindow window;
     public ProCamManager procamManager;
@@ -14,19 +15,8 @@ public class gui : MonoBehaviour {
     private string camHeight = "1200"; //WEBCAMERAは1080
     private string num = "0";
 
-    private bool threshFlag = true;
     private bool initialized = false;
 
-	// Use this for initialization
-	void Start () {
-        QualitySettings.vSyncCount = 0; // VSyncをOFFにする
-        Application.targetFrameRate = 166; // ターゲットフレームレートを60に設定
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
 
     void OnGUI()
     {
@@ -78,22 +68,7 @@ public class gui : MonoBehaviour {
             }
 
         }
-/*
-        if (GUI.Button(new Rect(470, 70, 150, 20), "推定値記録 start/stop"))
-        {
-            projectorposeestimationManager.isCameraRecord = !projectorposeestimationManager.isCameraRecord;
-            projectorposeestimationManager.isRecord = !projectorposeestimationManager.isRecord;
-            string filename = projectorposeestimationManager.isKalman ? "dstT_Kalman.csv" : "dstT.csv";
-            if (projectorposeestimationManager.isRecord)
-            {
-                projectorposeestimationManager.OpenStream(filename);
-            }
-            else
-            {
-                projectorposeestimationManager.CloseStream();
-            }
-        }
-*/
+
         GUI.TextField(new Rect(170, 110, 100, 20), "Camera width");
         camWidth = GUI.TextField(new Rect(270, 110, 50, 20), camWidth);
         GUI.TextField(new Rect(170, 130, 100, 20), "Camera height");

@@ -11,8 +11,6 @@ public class ProCamManager : MonoBehaviour {
     static extern void loadProjectorParam(double[] projectionMatrix, double[] dist);
     [DllImport("ProjectorPoseEstimation_DLL", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     static extern void loadExternalParam(double[] R, double[] T);
-    [DllImport("ProjectorPoseEstimation_DLL", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-    static extern void PCL_viewer();
 
     public Camera mainCamera;
     public Camera mainProjector;
@@ -26,14 +24,11 @@ public class ProCamManager : MonoBehaviour {
     public double[] proj_K;
     public double[] proj_dist;
     
-    //初期位置(表示用)
-    public double[] initialT;
-
     //プロジェクタの外部(確認表示用)
     public double[] proj_R;
     public double[] proj_T;
 
-    //プロジェクタとカメラの距離(tのノルム)
+    //プロジェクタとカメラの距離(tのノルム)(確認表示用)
     public double nolm = 0.0;
 
     //プロジェクタの軌跡を残す間隔（フレーム）
@@ -42,27 +37,24 @@ public class ProCamManager : MonoBehaviour {
 
 
 	// Use this for initialization
-	void Start () {
+    void Start()
+    {
+        QualitySettings.vSyncCount = 0; // VSyncをOFFにする
+        Application.targetFrameRate = 166; // ターゲットフレームレートを60に設定
+
         //マルチディスプレイを有効にする
         for (int i = 0; i < maxDisplayCount && i < Display.displays.Length; i++)
         {
             Display.displays[i].Activate();
         }
-	
+
         //FPS設定(Dont sync にしてないと効かない)
         Application.targetFrameRate = 60;
 
-	}
-	
-	// Update is called once per frame
-	void Update () {	
-	}
-
-    public void callPCLViewer()
-    {
-        PCL_viewer();
+        proj_R = new double[9];
+        proj_T = new double[3];
     }
-
+	
     public void loadParam(int camWidth, int camHeight, int proWidth, int proHeight)
     {
         setCameraMatrix(camWidth, camHeight);
@@ -84,7 +76,7 @@ public class ProCamManager : MonoBehaviour {
 
         Matrix4x4 cameraMatrix = Matrix4x4.zero;
 
-        cameraMatrix.m00 = (float)((2.0f * cameraMat[0]) / width);
+        cameraMatrix.m00 = (float)((2.0f * cameraMat[0]) / width); //(float)((-2.0f * cameraMat[0]) / width);
         cameraMatrix.m01 = 0.0f;
         cameraMatrix.m02 = (float)(1.0f - ((2.0f * cameraMat[2]) / width));
         cameraMatrix.m03 = 0.0f;
@@ -100,31 +92,12 @@ public class ProCamManager : MonoBehaviour {
         cameraMatrix.m31 = 0.0f;
         cameraMatrix.m32 = -1.0f;
         cameraMatrix.m33 = 0.0f;
-        //cameraMatrix.m00 = (float)((-2.0f * cameraMat[0]) / width);
-        //cameraMatrix.m01 = 0.0f;
-        //cameraMatrix.m02 = (float)(1.0f - ((2.0f * cameraMat[2]) / width));
-        //cameraMatrix.m03 = 0.0f;
-        //cameraMatrix.m10 = 0.0f;
-        //cameraMatrix.m11 = (float)((2.0f * cameraMat[4]) / height);
-        //cameraMatrix.m12 = (float)(-1.0f + ((2.0f * cameraMat[5]) / height));
-        //cameraMatrix.m13 = 0.0f;
-        //cameraMatrix.m20 = 0.0f;
-        //cameraMatrix.m21 = 0.0f;
-        //cameraMatrix.m22 = (float)(-(far + near) / (far - near));
-        //cameraMatrix.m23 = (float)(-2 * far * near / (far - near));
-        //cameraMatrix.m30 = 0.0f;
-        //cameraMatrix.m31 = 0.0f;
-        //cameraMatrix.m32 = -1.0f;
-        //cameraMatrix.m33 = 0.0f;
 
         // set projection matrix
         mainCamera.projectionMatrix = cameraMatrix;
 
-        //外部パラメータの設定(カメラ)は常に原点なので単位行列
-        // set external matrix
-        ////z軸方向に逆を向いているので、回転
-        //mainCamera.worldToCameraMatrix = Matrix4x4.identity * Matrix4x4.TRS(Vector3.zero, Quaternion.AngleAxis(180, Vector3.up), Vector3.one);
-        //mainCamera.worldToCameraMatrix = Matrix4x4.identity;
+        //外部パラメータの設定 (カメラは常に原点なので単位行列)
+        ////z軸方向に逆を向いているので、逆に
         Matrix4x4 m = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(1, 1, -1));
         mainCamera.worldToCameraMatrix = m * Matrix4x4.identity;
     }
@@ -143,8 +116,7 @@ public class ProCamManager : MonoBehaviour {
 
         Matrix4x4 cameraMatrix = Matrix4x4.zero;
 
-        cameraMatrix.m00 = (float)((2.0f * proj_K[0]) / width);
-//        cameraMatrix.m00 = (float)((-2.0f * proj_K[0]) / width);
+        cameraMatrix.m00 = (float)((2.0f * proj_K[0]) / width); //(float)((-2.0f * proj_K[0]) / width);
         cameraMatrix.m01 = 0.0f;
         cameraMatrix.m02 = (float)(1.0f - ((2.0f * proj_K[2]) / width));
         cameraMatrix.m03 = 0.0f;
@@ -171,136 +143,7 @@ public class ProCamManager : MonoBehaviour {
 
         loadExternalParam(RMat, TMat);
 
-        ////y,z軸を反転
-        //Matrix4x4 calibMatrix = Matrix4x4.identity;
-        //calibMatrix.m00 = (float)RMat[0];
-        //calibMatrix.m01 = (float)RMat[1];
-        //calibMatrix.m02 = (float)RMat[2];
-        //calibMatrix.m10 = (float)RMat[3];
-        //calibMatrix.m11 = (float)RMat[4];
-        //calibMatrix.m12 = (float)RMat[5];
-        //calibMatrix.m20 = (float)RMat[6];
-        //calibMatrix.m21 = (float)RMat[7];
-        //calibMatrix.m22 = (float)RMat[8];
-        //calibMatrix.m03 = (float)(TMat[0] * 0.001);
-        //calibMatrix.m13 = (float)(TMat[1] * 0.001);
-        //calibMatrix.m23 = (float)(TMat[2] * 0.001);
-        //Matrix4x4 m = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(1, -1, -1));
-        //calibMatrix = m * calibMatrix;
-
-        //float[] camR = new float[9];
-        //float[] camT = new float[3];
-        //ChangeCameraCoordinate(calibMatrix, camR, camT);
-
-        Matrix4x4 ExternalMatrix = Matrix4x4.identity;
-
-        //ExternalMatrix.m00 = camR[0];
-        //ExternalMatrix.m01 = camR[1];
-        //ExternalMatrix.m02 = camR[2];
-        //ExternalMatrix.m10 = camR[3];
-        //ExternalMatrix.m11 = camR[4];
-        //ExternalMatrix.m12 = camR[5];
-        //ExternalMatrix.m20 = camR[6];
-        //ExternalMatrix.m21 = camR[7];
-        //ExternalMatrix.m22 = camR[8];
-        ExternalMatrix.m00 = (float)RMat[0];
-        ExternalMatrix.m01 = (float)RMat[1];
-        ExternalMatrix.m02 = (float)RMat[2];
-        ExternalMatrix.m10 = (float)RMat[3];
-        ExternalMatrix.m11 = (float)RMat[4];
-        ExternalMatrix.m12 = (float)RMat[5];
-        ExternalMatrix.m20 = (float)RMat[6];
-        ExternalMatrix.m21 = (float)RMat[7];
-        ExternalMatrix.m22 = (float)RMat[8];
-
-        //tをセット
-        //ExternalMatrix.m03 = camT[0];
-        //ExternalMatrix.m13 = camT[1];
-        //ExternalMatrix.m23 = camT[2];
-//        ExternalMatrix.m03 = (float)(-TMat[0] * 0.001);
-//        ExternalMatrix.m13 = (float)(-TMat[1] * 0.001);
-//        ExternalMatrix.m23 = (float)(-TMat[2] * 0.001);
-
-        ExternalMatrix.m03 = (float)(TMat[0] * 0.001);
-        ExternalMatrix.m13 = (float)(TMat[1] * 0.001);
-        ExternalMatrix.m23 = (float)(TMat[2] * 0.001);
-        setProjectorTransoform(ExternalMatrix);
-
-
-        ////z軸方向に逆を向いているので、回転
-//        ExternalMatrix = ExternalMatrix * Matrix4x4.TRS(Vector3.zero, Quaternion.AngleAxis(180, Vector3.up), Vector3.one);
-        //Matrix4x4 m = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(1, 1, -1));
-        //ExternalMatrix = m * ExternalMatrix;
-
-        //転置(逆行列)
-        //ExternalMatrix = ExternalMatrix.inverse;
-        ////並進にRをかける
-        //double t00 = ExternalMatrix.m00 * (float)TMat[0] + ExternalMatrix.m01 * (float)TMat[1] + ExternalMatrix.m02 * (float)TMat[2] + ExternalMatrix.m03;
-        //double t10 = ExternalMatrix.m10 * (float)TMat[0] + ExternalMatrix.m11 * (float)TMat[1] + ExternalMatrix.m12 * (float)TMat[2] + ExternalMatrix.m13;
-        //double t20 = ExternalMatrix.m20 * (float)TMat[0] + ExternalMatrix.m21 * (float)TMat[1] + ExternalMatrix.m22 * (float)TMat[2] + ExternalMatrix.m23;
-        //double t30 = ExternalMatrix.m30 * (float)TMat[0] + ExternalMatrix.m31 * (float)TMat[1] + ExternalMatrix.m32 * (float)TMat[2] + ExternalMatrix.m33;
-
-        ////wで割って向きを逆にする(z, yはそのまま)
-        //t00 = -t00 / t30;
-        //t10 = -t10 / t30;
-        //t20 = -t20 / t30;
-
-        ////tをセット
-        //ExternalMatrix.m03 = (float)(t00 / 1000);
-        //ExternalMatrix.m13 = (float)(t10 / 1000);
-        //ExternalMatrix.m23 = (float)(t20 / 1000);
-
-        //なんか逆にする
-        //ExternalMatrix.m10 = -ExternalMatrix.m10;
-        //ExternalMatrix.m11 = -ExternalMatrix.m11;
-        //ExternalMatrix.m12 = -ExternalMatrix.m12;
-
-        // set external matrix
-//        mainProjector.worldToCameraMatrix = ExternalMatrix;
-        //mainProjector.worldToCameraMatrix = Matrix4x4.TRS(Vector3.right, Quaternion.identity, Vector3.one);
-        //mainProjector.worldToCameraMatrix = Matrix4x4.identity;
-
-        ////mainProjectorのTramsformを変えるパターン
-        //Matrix4x4 RotateMatrix = Matrix4x4.identity;
-        //RotateMatrix.m00 = ExternalMatrix.m00;
-        //RotateMatrix.m01 = ExternalMatrix.m01;
-        //RotateMatrix.m02 = ExternalMatrix.m02;
-        //RotateMatrix.m10 = ExternalMatrix.m10;
-        //RotateMatrix.m11 = ExternalMatrix.m11;
-        //RotateMatrix.m12 = ExternalMatrix.m12;
-        //RotateMatrix.m20 = ExternalMatrix.m20;
-        //RotateMatrix.m21 = ExternalMatrix.m21;
-        //RotateMatrix.m22 = ExternalMatrix.m22;
-        //mainProjector.transform.rotation = QuaternionFromMatrix(RotateMatrix);
-        //mainProjector.transform.position = new Vector3(ExternalMatrix.m03, ExternalMatrix.m13, ExternalMatrix.m23);
-
-
-        //debug用
-        proj_R = new double[9];
-        proj_T = new double[3];
-
-        proj_R[0] = ExternalMatrix.m00;
-        proj_R[1] = ExternalMatrix.m01;
-        proj_R[2] = ExternalMatrix.m02;
-        proj_R[3] = ExternalMatrix.m10;
-        proj_R[4] = ExternalMatrix.m11;
-        proj_R[5] = ExternalMatrix.m12;
-        proj_R[6] = ExternalMatrix.m20;
-        proj_R[7] = ExternalMatrix.m21;
-        proj_R[8] = ExternalMatrix.m22;
-
-        proj_T[0] = ExternalMatrix.m03;
-        proj_T[1] = ExternalMatrix.m13;
-        proj_T[2] = ExternalMatrix.m23;
-
-        nolm = Mathf.Sqrt(ExternalMatrix.m03 * ExternalMatrix.m03 + ExternalMatrix.m13 * ExternalMatrix.m13 + ExternalMatrix.m23 * ExternalMatrix.m23);
-
-        //初期位置(表示用)
-        initialT = new double[3];
-        initialT[0] = ExternalMatrix.m03;
-        initialT[1] = ExternalMatrix.m13;
-        initialT[2] = ExternalMatrix.m23;
-
+        UpdateProjectorExternalParam(RMat, TMat);
     }
 
     //プロジェクタの外部パラメータの更新
@@ -317,27 +160,12 @@ public class ProCamManager : MonoBehaviour {
         ExternalMatrix.m20 = (float)RMat[6];
         ExternalMatrix.m21 = (float)RMat[7];
         ExternalMatrix.m22 = (float)RMat[8];
-
+        //[m]単位で
         ExternalMatrix.m03 = (float)(TMat[0] * 0.001);
         ExternalMatrix.m13 = (float)(TMat[1] * 0.001);
         ExternalMatrix.m23 = (float)(TMat[2] * 0.001);
+
         setProjectorTransoform(ExternalMatrix);
-
-        //tをセット
-        //ExternalMatrix.m03 = (float)(TMat[0] * 0.001);
-        //ExternalMatrix.m13 = (float)(-TMat[1] * 0.001);
-        //ExternalMatrix.m23 = (float)(TMat[2] * 0.001);
-//        ExternalMatrix.m03 = (float)(-TMat[0] * 0.001);
-//        ExternalMatrix.m13 = (float)(-TMat[1] * 0.001);
-//        ExternalMatrix.m23 = (float)(-TMat[2] * 0.001);
-
-        ////z軸方向に逆を向いているので、回転
-//        ExternalMatrix = ExternalMatrix * Matrix4x4.TRS(Vector3.zero, Quaternion.AngleAxis(180, Vector3.up), Vector3.one);
-        //Matrix4x4 m = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(1, 1, -1));
-        //ExternalMatrix = m * ExternalMatrix;
-
-        // set external matrix
- //       mainProjector.worldToCameraMatrix = ExternalMatrix;
 
         //debug用
         proj_R[0] = ExternalMatrix.m00;
@@ -377,12 +205,7 @@ public class ProCamManager : MonoBehaviour {
         Vector3 TramslateVector = new Vector3(calibMatrix.m03, calibMatrix.m13, calibMatrix.m23);
         Vector3 camTvec = -(t_RotateMatrix * TramslateVector);
 
-        //Debug.Log("(x, y, z): (" + camTvec.x + ", " + camTvec.y + ", " + camTvec.z + ")");
-
-        //transform projector
         //y軸逆にする
-        //Matrix4x4 m = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(1, 1, 1));
-        //t_RotateMatrix = m * t_RotateMatrix;
         camTvec.y = -camTvec.y;
 
         if (!float.IsNaN(camTvec.x) && !float.IsNaN(camTvec.y) && !float.IsNaN(camTvec.z))
@@ -419,9 +242,10 @@ public class ProCamManager : MonoBehaviour {
         Quaternion q = new Quaternion((float)quart[0], (float)quart[1], (float)quart[2], (float)quart[3]);
         //Quaternion q = QuaternionFromMatrix(t_RotateMatrix);
         //Quaternion q = MatrixToQuaternion(t_RotateMatrix);
-        //mainProjector.transform.eulerAngles = new Vector3(-q.eulerAngles.x,q.eulerAngles.y, -q.eulerAngles.z);
+
         if (!float.IsNaN(q.x) && !float.IsNaN(q.y) && !float.IsNaN(q.z) && !float.IsNaN(q.w))
         {
+            //mainProjector.transform.eulerAngles = new Vector3(-q.eulerAngles.x, q.eulerAngles.y, -q.eulerAngles.z);
             mainProjector.transform.rotation = new Quaternion(-q.x, q.y, -q.z, q.w); //Unityの座標軸と全軸逆向き
         }
 

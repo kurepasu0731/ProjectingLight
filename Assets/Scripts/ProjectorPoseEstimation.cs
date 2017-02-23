@@ -8,16 +8,6 @@ using System.IO;
 
 public class ProjectorPoseEstimation : MonoBehaviour {
 
-    //**WEBCAMERA**//
-    [DllImport("WebCamera_DLL", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-    private static extern IntPtr getCamera(int device_);
-    [DllImport("WebCamera_DLL", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-    private static extern void setCameraProp(IntPtr camera, int device, int width, int height, int fps);
-    [DllImport("WebCamera_DLL", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-    private static extern void releaseCamera(IntPtr camera, int device);
-    [DllImport("WebCamera_DLL", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-    private static extern void getCameraTexture(IntPtr camera, IntPtr data, bool isCameraRecord, bool isShowWin);
-
     //**PGRCAMERA**//
     [DllImport("PGR_DLL", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern IntPtr getPGR(int device_);
@@ -41,7 +31,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     private static extern void createCameraMask_pgr(IntPtr camera, IntPtr cam_data);
 
 
-
+    //**ProjectorPoseEstimationコア**//
     [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern IntPtr openProjectorEstimation(int camWidth, int camHeight, int proWidth, int proHeight, double trackingtime, string backgroundImgFile,
                                                          int checkerRow, int checkerCol, int blockSize, int x_offset, int y_offset);
@@ -72,20 +62,14 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     public static extern void set_debug_log_func(DebugLogDelegate func);
 
-
-    [DllImport("multiWindow", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-    static extern void closeWindow(string windowName);
-
-
     public RenderTexture projectorImage; //プロジェクタ投影画像
     public RenderTexture cameraMask; //カメラマスク画像
 
-    public WebCameraManager webcamManager;
     public ProCamManager procamManager;
 
     //カメラ・プロジェクタの解像度
     public int camWidth = 1920;
-    public int camHeight = 1200; // WEBCAMERAは1080
+    public int camHeight = 1200;
     public int proWidth = 1280;
     public int proHeight = 800;
 
@@ -107,10 +91,6 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     public int DOT_THRESH_VAL_BRIGHT = 100; //ドット色閾値
     public float RESIZESCALE = 1.0f;
 
-    //検出されたドットのデータ
-    private int dotsCount;
-    private int[] dotsData;
-
     //背景画像ファイル
     public string backgroundImgFile;// Assets/Image/○○
 
@@ -120,6 +100,33 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     public int BlockSize = 64;
     public int X_offset = 128;
     public int Y_offset = 112;
+
+    //プロジェクタ位置推定を開始するかどうか
+    public bool isTrack = false;
+    //カルマンフィルタ使うかどうか
+    public bool isKalman = true;
+    //動き予測するかどうか
+    public bool isPredict = false;
+    //遅延補償する時間(ms)
+    public double trackingTime = 113; //[ms]
+
+    //フラグのフラグ(トラッキングボタン押す前に設定する)
+    public bool CSVREC = false; //トラッキングしてるときにcsvに記録するかどうか
+    public bool VIDEOREC = false;//トラッキングしてるときに録画するかどうか
+
+    //録画するか
+    [HideInInspector]
+    public bool isCameraRecord = false;
+   //csv記録するかどうか
+    [HideInInspector]
+    public bool isRecord = false;
+
+    //csv記録用
+    private System.IO.StreamWriter sw;
+
+    //検出されたドットのデータ
+    private int dotsCount;
+    private int[] dotsData;
 
     //ネイティブへのクラスポインタ
     private IntPtr projectorestimation;
@@ -138,38 +145,10 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     private double[] dst_R_predict = new double[9];
     private double[] dst_T_predict = new double[3];
 
-
     //推定できたかどうか
     private bool result = false;
-    //プロジェクタ位置推定を開始するかどうか
-    public bool isTrack = false;
-    //カルマンフィルタ使うかどうか
-    public bool isKalman = true;
-    //動き予測するかどうか
-    public bool isPredict = false;
-    //遅延補償する時間(ms)
-    public double trackingTime = 113; //[ms]
-    //csv記録するかどうか
-    [HideInInspector]
-    public bool isRecord = false;
-    private System.IO.StreamWriter sw;
 
-    //録画するか
-    [HideInInspector]
-    public bool isCameraRecord = false;
-
-    //フラグのフラグ(トラッキングボタン押す前に設定する)
-    public bool CSVREC = false; //トラッキングしてるときにcsvに記録するかどうか
-    public bool VIDEOREC = false;//トラッキングしてるときに録画するかどうか
-
-
-    //録画した時のプロジェクタの初期値(recordedInitialValue.txtからコピペする)
-    private bool isfirst = true; //最初のフレームだけ
-    private double[] recordedInitialR = { 0.659133818639633, -0.0200499252027763, -0.751758345231297, -0.00118308540885864, 0.999615643030721, -0.0276977709787877, 0.752024739908502, 0.0191459318822852, 0.658856755188795 };
-    private double[] recordedInitialT = { 503.653325643345, -265.302786440286, 519.213222703862 };
-
-
-    //WebCamera関係
+    //Camera関係
     private IntPtr camera_;
     private Texture2D texture_;
     private Color32[] pixels_;
@@ -181,11 +160,6 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     private Color32[] texturePixels_;
     private GCHandle texturePixelsHandle_;
     private IntPtr texturePixelsPtr_;
-    //プロジェクタの画像のポインタ
-    //private Texture2D proj_texture;
-    //private Color32[] proj_texturePixels_;
-    //private GCHandle proj_texturePixelsHandle_;
-    //private IntPtr proj_texturePixelsPtr_;
 
     //処理時間計測用
     private float check_time;
@@ -199,153 +173,90 @@ public class ProjectorPoseEstimation : MonoBehaviour {
 
 
     // Update is called once per frame
-	void Update () {
+    void Update()
+    {
 
         if (isTrack == true)
         {
             //一旦初期化
             result = false;
 
-            ////録画時
-            ////録画開始時の初期値を記録しておく
-            //if (isCameraRecord)
-            //{
-            //    if (isfirst)
-            //    {
-            //        ////録画時
-            //        //if (result)
-            //        //{
-            //        //    Encoding sjisEnc = Encoding.GetEncoding("Shift_JIS");
-            //        //    StreamWriter writer = new StreamWriter(@"recordedInitialValue.txt", false, sjisEnc);
-            //        //    for (int i = 0; i < 9; i++)
-            //        //    {
-            //        //        writer.Write(dst_R[i] + ",");
-            //        //    }
-            //        //    writer.WriteLine();
-            //        //    for (int i = 0; i < 3; i++)
-            //        //    {
-            //        //        writer.Write(dst_T[i] + ",");
-            //        //    }
-            //        //    writer.Close();
-            //        //}
-            //        ////再生時
-            //        //initial_R = recordedInitialR;
-            //        //initial_T = recordedInitialT;
-            //        isfirst = false;
-            //    }
-            //}
-
-            ////★処理時間計測
-            //check_time = Time.realtimeSinceStartup * 1000;
             //カメラの画像取ってくる
-            //**WEBCAMERA**//
-            //getCameraTexture(camera_, pixels_ptr_, isCameraRecord, false);
             //**PGRCAMERA**//
-//            getPGRTexture(camera_, camdevice, pixels_ptr_, isCameraRecord, false);
-
-            //check_time = Time.realtimeSinceStartup * 1000 - check_time;
-            //Debug.Log("getCameraTexture :" + check_time + "ms");
-
-            //★処理時間計測
-            //check_time = Time.realtimeSinceStartup * 1000;
+            //getPGRTexture(camera_, camdevice, pixels_ptr_, isCameraRecord, false);
 
             //if (pixels_ptr_ != System.IntPtr.Zero)
             //{//位置推定(プロジェクタ画像更新なし)
 
+            ////★処理時間計測
+            //check_time = Time.realtimeSinceStartup * 1000;
+            //**ドット検出フェーズ**//
+            dotsCount = getDotsCount(camera_);
+            if (dotsCount > 0 && dotsCount < 10000)
+            {
+
+                dotsData = new int[dotsCount * 2];
+                getDotsData(camera_, ref dotsData[0]);
+                ////★処理時間計測
+                //check_time = Time.realtimeSinceStartup * 1000 - check_time;
+                //Debug.Log("getDotsData :" + check_time + "ms");
+
                 ////★処理時間計測
                 //check_time = Time.realtimeSinceStartup * 1000;
-                //**ドット検出フェーズ**//
-                dotsCount = getDotsCount(camera_);
-                if (dotsCount > 0 && dotsCount < 10000)
-                {
-
-                    dotsData = new int[dotsCount * 2];
-                    getDotsData(camera_, ref dotsData[0]);
-
-
-                    ////★処理時間計測
-                    //check_time = Time.realtimeSinceStartup * 1000 - check_time;
-                    //Debug.Log("getDotsData :" + check_time + "ms");
-
-                    ////★処理時間計測
-                    //check_time = Time.realtimeSinceStartup * 1000;
-
-                    result = callfindProjectorPose_Corner(projectorestimation,
-                        //pixels_ptr_,
-                        dotsCount, dotsData,
-                        initial_R, initial_T, dst_R, dst_T, error,
-                        dst_R_predict, dst_T_predict,
-                        //camCornerNum, camMinDist, projCornerNum, projMinDist, 
-                        thresh, mode, isKalman, isPredict);
-                        //C, DOT_THRESH_VAL_MIN, DOT_THRESH_VAL_MAX, RESIZESCALE);
-
-                    if (double.IsNaN(dst_R[0]) || double.IsNaN(dst_R[1]) || double.IsNaN(dst_R[2]) ||
-                       double.IsNaN(dst_R[3]) || double.IsNaN(dst_R[4]) || double.IsNaN(dst_R[5]) ||
-                       double.IsNaN(dst_R[6]) || double.IsNaN(dst_R[7]) || double.IsNaN(dst_R[8]) ||
-                       double.IsNaN(dst_T[0]) || double.IsNaN(dst_T[1]) || double.IsNaN(dst_T[2]))
-                    {
-                        result = false;
-                    }
-
-                    ////★処理時間計測
-                    //check_time = Time.realtimeSinceStartup * 1000 - check_time;
-                    //Debug.Log("caluclate :" + check_time + "ms");
-                }
-                else
-                {
-                    result = false;
-                }
+                result = callfindProjectorPose_Corner(projectorestimation,
+                    //pixels_ptr_,
+                    dotsCount, dotsData,
+                    initial_R, initial_T, dst_R, dst_T, error,
+                    dst_R_predict, dst_T_predict,
+                    //camCornerNum, camMinDist, projCornerNum, projMinDist, 
+                    thresh, mode, isKalman, isPredict);
+                //C, DOT_THRESH_VAL_MIN, DOT_THRESH_VAL_MAX, RESIZESCALE);
+                ////★処理時間計測
+                //check_time = Time.realtimeSinceStartup * 1000 - check_time;
+                //Debug.Log("caluclate :" + check_time + "ms");
+            }
+            else
+            {
+                result = false;
+            }
             //}
             //check_time = Time.realtimeSinceStartup * 1000 - check_time;
             //Debug.Log("all callfindProjectorPose_Corner :" + check_time + "ms");
 
             if (result)
             {
-                if (!double.IsNaN(dst_R[0]) && !double.IsNaN(dst_R[1]) && !double.IsNaN(dst_R[2]) &&
-                        !double.IsNaN(dst_R[3]) && !double.IsNaN(dst_R[4]) && !double.IsNaN(dst_R[5]) &&
-                        !double.IsNaN(dst_R[6]) && !double.IsNaN(dst_R[7]) && !double.IsNaN(dst_R[8]) &&
-                        !double.IsNaN(dst_T[0]) && !double.IsNaN(dst_T[1]) && !double.IsNaN(dst_T[2]))
-                    {
-                        //プロジェクタの外部パラメータ更新
-                        if (isPredict)//予測ありのときは予測値で更新
-                        {
-                            procamManager.UpdateProjectorExternalParam(dst_R_predict, dst_T_predict);
-                        }
-                        else
-                        {
-                            procamManager.UpdateProjectorExternalParam(dst_R, dst_T);
-                        }
-
-                    //csvに記録
-                    if (isRecord) Record_T(dst_T, error[0]);
-
-
-                    initial_R = dst_R;
-                    initial_T = dst_T;
+                //プロジェクタの外部パラメータ更新
+                if (isPredict)//予測ありのときは予測値で更新
+                {
+                    procamManager.UpdateProjectorExternalParam(dst_R_predict, dst_T_predict);
                 }
                 else
                 {
-                    Debug.Log("Nan!!");
+                    procamManager.UpdateProjectorExternalParam(dst_R, dst_T);
                 }
+
+                //csvに記録
+                if (isRecord) Record_T(dst_T, error[0]);
+
+                initial_R = dst_R;
+                initial_T = dst_T;
             }
             else
             {
-                 Debug.Log("failed");
+                Debug.Log("failed");
             }
         }
-        //WebCameraの初期化が終わっていたら、画像表示開始
+        //Cameraの初期化が終わっていたら、画像表示開始
         else if (camera_ != System.IntPtr.Zero && pixels_ptr_ != System.IntPtr.Zero && camdevice != -1)
         {
             //★処理時間計測
             //check_time = Time.realtimeSinceStartup * 1000;
-            //**WEBCAMERA**//
-            //getCameraTexture(camera_, pixels_ptr_, isCameraRecord, true);
             //**PGRCAMERA**//
             getPGRTexture(camera_, camdevice, pixels_ptr_, isCameraRecord, true);
             //check_time = Time.realtimeSinceStartup * 1000 - check_time;
             //Debug.Log("getCameraTexture :" + check_time + "ms");
 
-            ////ドット検出テスト//
+            ////ドット検出のみ//
             //★処理時間計測
             //check_time = Time.realtimeSinceStartup * 1000;
             dotsCount = getDotsCount(camera_);
@@ -355,20 +266,12 @@ public class ProjectorPoseEstimation : MonoBehaviour {
             {
                 dotsData = new int[dotsCount * 2];
                 getDotsData(camera_, ref dotsData[0]);
-                //Debug.Log(dotsData.Length);
-                //for (int i = 0; i < dotsCount; i++)
-                //{
-                //    Debug.Log(dotsData[i]);
-                //}
                 //渡せるか確認
                 checkDotsArray(camera_, pixels_ptr_, dotsCount, dotsData);
                 //showPixelData(pixels_ptr_);
             }
-            //showPixelData(pixels_ptr_);
-
-
         }
-	}
+    }
 
     public void OpenStream(string filename)
     {
@@ -394,17 +297,6 @@ public class ProjectorPoseEstimation : MonoBehaviour {
         }
     }
 
-    public void initWebCamera(int fps, int cameraWidth, int cameraHeight)
-    {
-        camera_ = getCamera(camdevice);
-        setCameraProp(camera_, camdevice, cameraWidth, cameraHeight, fps);
-        texture_ = new Texture2D(cameraWidth, cameraHeight, TextureFormat.ARGB32, false);
-        pixels_ = texture_.GetPixels32();
-        pixels_handle_ = GCHandle.Alloc(pixels_, GCHandleType.Pinned);
-        pixels_ptr_ = pixels_handle_.AddrOfPinnedObject();
-
-    }
-
     public void initPGR(int cameraWidth, int cameraHeight)
     {
         initPGR(camera_, camdevice);
@@ -423,8 +315,6 @@ public class ProjectorPoseEstimation : MonoBehaviour {
         //初期キャリブレーションファイル、3次元復元ファイル読み込み
         callloadParam(projectorestimation, initial_R, initial_T);
         //カメラ起動 各種設定
-        //**WEBCAMERA**//
-        //initWebCamera(fps, cameraWidth, cameraHeight);
         //**PGRCAMERA**//
         initPGR(cameraWidth, cameraHeight);
     }
@@ -433,8 +323,6 @@ public class ProjectorPoseEstimation : MonoBehaviour {
     void OnApplicationQuit()
     {
         pixels_handle_.Free();
-        //**WEBCAMERA**//
-        //releaseCamera(camera_, camdevice);
         //**PGRCAMERA**//
         if (camera_ != System.IntPtr.Zero)
         {
