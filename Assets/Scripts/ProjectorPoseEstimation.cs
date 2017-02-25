@@ -33,11 +33,11 @@ public class ProjectorPoseEstimation : MonoBehaviour {
 
     //**ProjectorPoseEstimationコア**//
     [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-    private static extern IntPtr openProjectorEstimation(int camWidth, int camHeight, int proWidth, int proHeight, double trackingtime, string backgroundImgFile,
-                                                         int checkerRow, int checkerCol, int blockSize, int x_offset, int y_offset);
+    private static extern IntPtr openProjectorEstimation(int camWidth, int camHeight, int proWidth, int proHeight, double trackingtime, string backgroundImgFile);
+
     [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern void callloadParam(IntPtr projectorestimation, double[] initR, double[] initT);
-    //プロジェクタ画像更新なし
+
     [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     private static extern bool callfindProjectorPose_Corner(IntPtr projectorestimation,
                                                                                  int dotsCount, int[] dots_data,
@@ -90,13 +90,6 @@ public class ProjectorPoseEstimation : MonoBehaviour {
 
     //背景画像ファイル
     public string backgroundImgFile;// Assets/Image/○○
-
-    //チェッカパターン情報
-    public int checkerRow = 10;
-    public int checkerCol = 17;
-    public int BlockSize = 64;
-    public int X_offset = 128;
-    public int Y_offset = 112;
 
     //プロジェクタ位置推定を開始するかどうか
     public bool isTrack = false;
@@ -163,7 +156,7 @@ public class ProjectorPoseEstimation : MonoBehaviour {
 
 	// Use this for initialization
 	void Awake () {
-        projectorestimation = openProjectorEstimation(camWidth, camHeight, proWidth, proHeight, trackingTime, backgroundImgFile, checkerRow, checkerCol, BlockSize, X_offset, Y_offset);
+        projectorestimation = openProjectorEstimation(camWidth, camHeight, proWidth, proHeight, trackingTime, backgroundImgFile);
         camera_ = getPGR(camdevice);
         mask_texture = new Texture2D(cameraMask.width, cameraMask.height, TextureFormat.ARGB32, true);
     }

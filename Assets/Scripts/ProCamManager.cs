@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 
 public class ProCamManager : MonoBehaviour {
 
-    [DllImport("ProjectorPoseEstimation_DLL", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     static extern void loadCameraParam(double[] projectionMatrix, double[] dist);
-    [DllImport("ProjectorPoseEstimation_DLL", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     static extern void loadProjectorParam(double[] projectionMatrix, double[] dist);
-    [DllImport("ProjectorPoseEstimation_DLL", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("ProjectorPoseEstimation_DLL2", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     static extern void loadExternalParam(double[] R, double[] T);
 
     public Camera mainCamera;
